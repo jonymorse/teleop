@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.unity.robotics.urdf-importer": "https://github.com/Unity-Technologies/URDF-Importer.git?path=/com.unity.robotics.urdf-importer#v0.5.2",
     "com.meta.xr.mrutilitykit": "203.0.0",
     "com.meta.xr.sdk.all": "203.0.0",
     "com.meta.xr.sdk.core": "203.0.0",

@@ -1,5 +1,21 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7968261077437360654
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 15010, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: Quality Settings
+  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfileQualitySettings
+  m_DefaultQualityLevel: Meta Quest (Build Profile)
+  m_QualityLevels:
+  - Mobile
+  - Meta Quest (Build Profile)
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10,14 +26,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 15003, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Meta Quest
+  m_Name: Meta Quest 1
   m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfile
   m_AssetVersion: 1
   m_BuildTarget: 13
   m_Subtarget: 0
   m_PlatformId: 80657fe557de4d17822398b3a01b8c9e
   m_PlatformBuildProfile:
-    rid: 1394930900305182734
+    rid: 1394930903091511372
   m_OverrideGlobalSceneList: 0
   m_Scenes: []
   m_HasScriptingDefines: 0
@@ -31,7 +47,7 @@ MonoBehaviour:
     - line: '|   AndroidProfiler: 0'
     - line: '|   AndroidFilterTouchesWhenObscured: 0'
     - line: '|   AndroidEnableSustainedPerformanceMode: 0'
-    - line: '|   defaultScreenOrientation: 3'
+    - line: '|   defaultScreenOrientation: 4'
     - line: '|   targetDevice: 2'
     - line: '|   useOnDemandResources: 0'
     - line: '|   accelerometerFrequency: 60'
@@ -41,7 +57,7 @@ MonoBehaviour:
     - line: '|   cursorHotspot: {x: 0, y: 0}'
     - line: '|   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b:
         0.1254902, a: 1}'
-    - line: '|   m_ShowUnitySplashScreen: 1'
+    - line: '|   m_ShowUnitySplashScreen: 0'
     - line: '|   m_ShowUnitySplashLogo: 1'
     - line: '|   m_SplashScreenOverlayOpacity: 1'
     - line: '|   m_SplashScreenAnimation: 1'
@@ -169,11 +185,13 @@ MonoBehaviour:
     - line: '|   tvOSBundleVersion: 1.0'
     - line: '|   bundleVersion: 0.1.0'
     - line: '|   preloadedAssets:'
-    - line: '|   - {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b,
-        type: 3}'
     - line: '|   - {fileID: 11400000, guid: 8a4d3ceea1c322d468cfb98efb00cdc7, type:
         2}'
-    - line: '|   - {fileID: 4677777201849844089, guid: 1e58c7cf84bd2594aa91ccee39fe0c40,
+    - line: '|   - {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b,
+        type: 3}'
+    - line: '|   - {fileID: -5818362878871220389, guid: 8a9c683b76608db488b40516f452e6c2,
+        type: 2}'
+    - line: '|   - {fileID: -2125974594491524312, guid: 1e58c7cf84bd2594aa91ccee39fe0c40,
         type: 2}'
     - line: '|   metroInputSource: 0'
     - line: '|   wsaTransparentSwapchain: 0'
@@ -555,7 +573,7 @@ MonoBehaviour:
     - line: '|       m_Kind: 1'
     - line: '|       m_SubKind: '
     - line: '|   m_BuildTargetBatching:'
-    - line: '|   - m_BuildTarget: Android'
+    - line: '|   - m_BuildTarget: Standalone'
     - line: '|     m_StaticBatching: 1'
     - line: '|     m_DynamicBatching: 0'
     - line: '|   m_BuildTargetShaderSettings: []'
@@ -567,6 +585,9 @@ MonoBehaviour:
     - line: '|     m_Automatic: 1'
     - line: '|   - m_BuildTarget: AndroidPlayer'
     - line: '|     m_APIs: 15000000'
+    - line: '|     m_Automatic: 0'
+    - line: '|   - m_BuildTarget: WindowsStandaloneSupport'
+    - line: '|     m_APIs: 02000000'
     - line: '|     m_Automatic: 0'
     - line: '|   m_BuildTargetVRSettings: []'
     - line: '|   m_DefaultShaderChunkSizeInMB: 16'
@@ -858,7 +879,9 @@ MonoBehaviour:
     - line: '|   webGLCloseOnQuit: 0'
     - line: '|   webWasm2023: 0'
     - line: '|   webEnableSubmoduleStrippingCompatibility: 0'
-    - line: '|   scriptingDefineSymbols: {}'
+    - line: '|   scriptingDefineSymbols:'
+    - line: '|     Android: OVR_DISABLE_HAND_PINCH_BUTTON_MAPPING'
+    - line: '|     Standalone: OVR_DISABLE_HAND_PINCH_BUTTON_MAPPING'
     - line: '|   additionalCompilerArguments: {}'
     - line: '|   platformArchitecture: {}'
     - line: '|   scriptingBackend:'
@@ -979,7 +1002,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 1394930900305182734
+    - rid: 1394930903091511372
       type: {class: AndroidPlatformBuildSettings, ns: UnityEditor.Android, asm: UnityEditor.Android.Extensions}
       data:
         m_Development: 0
@@ -1001,25 +1024,9 @@ MonoBehaviour:
         m_ExportAsGoogleAndroidProject: 0
         m_DebugSymbolLevel: 1
         m_DebugSymbolFormat: 5
-        m_CurrentDeploymentTargetId: 340YC10GBD1JVF
+        m_CurrentDeploymentTargetId: __builtin__target_default
         m_BuildType: 2
         m_LinkTimeOptimization: 0
         m_BuildAppBundle: 0
         m_IPAddressToConnect: 
         m_SymlinkSources: 0
---- !u!114 &8609031141224878268
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 15010, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Quality Settings
-  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildProfileQualitySettings
-  m_DefaultQualityLevel: Meta Quest (Build Profile)
-  m_QualityLevels:
-  - Mobile
-  - Meta Quest (Build Profile)

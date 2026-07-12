@@ -3019,6 +3019,7 @@ MonoBehaviour:
   damping: 0.08
   gain: 1.5
   maximumJointStepDegrees: 2
+  maximumTargetSpeed: 0.6
 --- !u!1 &1272358035
 GameObject:
   m_ObjectHideFlags: 8

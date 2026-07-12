@@ -21,12 +21,15 @@ namespace Teleoperation.Robots.UR5e.Editor
             "Assets/Teleoperation/Robots/UR5e/ur_description/meshes/ur5e/visual";
         private const string SceneDirectory = "Assets/Teleoperation/Scenes";
         private const string ScenePath = SceneDirectory + "/UR5eImportTest.unity";
+        private const string XrScenePath = SceneDirectory + "/UR5eXRTeleoperation.unity";
+        private const string MetaSampleScenePath = "Assets/Scenes/SampleScene.unity";
 
         static UR5eProjectSetup()
         {
             EditorApplication.delayCall += ApplyPaletteOncePerEditorSession;
             EditorApplication.delayCall += EnsureIkSolverInOpenTestScene;
             EditorApplication.delayCall += EnsureFlyCameraInOpenTestScene;
+            EditorApplication.delayCall += BuildXrTeleoperationSceneIfMissing;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
         }
 
@@ -36,7 +39,95 @@ namespace Teleoperation.Robots.UR5e.Editor
             {
                 EditorApplication.delayCall += EnsureIkSolverInOpenTestScene;
                 EditorApplication.delayCall += EnsureFlyCameraInOpenTestScene;
+                EditorApplication.delayCall += BuildXrTeleoperationSceneIfMissing;
             }
+        }
+
+        private static void BuildXrTeleoperationSceneIfMissing()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode || AssetDatabase.LoadAssetAtPath<SceneAsset>(XrScenePath) != null)
+                return;
+
+            BuildXrTeleoperationScene();
+        }
+
+        [MenuItem("Teleoperation/UR5e/Build XR Teleoperation Scene")]
+        public static void BuildXrTeleoperationScene()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                throw new System.InvalidOperationException("Exit Play mode before building the XR scene.");
+
+            EnsureAssetDirectory(SceneDirectory);
+            if (AssetDatabase.LoadAssetAtPath<SceneAsset>(XrScenePath) == null &&
+                !AssetDatabase.CopyAsset(MetaSampleScenePath, XrScenePath))
+            {
+                throw new System.InvalidOperationException("Could not copy the Meta XR SampleScene.");
+            }
+
+            AssetDatabase.Refresh();
+            var scene = EditorSceneManager.OpenScene(XrScenePath, OpenSceneMode.Single);
+            if (GameObject.Find("[BuildingBlock] Passthrough") == null)
+                throw new System.InvalidOperationException("Meta Passthrough building block is missing from the XR scene foundation.");
+
+            var existingRobot = Object.FindFirstObjectByType<UR5eJointController>();
+            if (existingRobot != null)
+                Object.DestroyImmediate(existingRobot.gameObject);
+
+            var robotPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if (robotPrefab == null)
+                throw new System.InvalidOperationException($"UR5e prefab is missing at {PrefabPath}.");
+
+            var robotObject = (GameObject)PrefabUtility.InstantiatePrefab(robotPrefab, scene);
+            robotObject.name = "UR5e";
+            robotObject.transform.SetPositionAndRotation(new Vector3(0f, 0f, 1.25f), Quaternion.identity);
+
+            var controller = robotObject.GetComponent<UR5eJointController>();
+            var solver = robotObject.GetComponent<UR5ePositionIkSolver>();
+            if (solver == null)
+                solver = robotObject.AddComponent<UR5ePositionIkSolver>();
+
+            var endEffector = FindDescendant(robotObject.transform, "tool0");
+            if (endEffector == null)
+                throw new System.InvalidOperationException("UR5e tool0 frame was not found.");
+
+            var targetObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            targetObject.name = "UR5e IK Target";
+            targetObject.transform.position = endEffector.position;
+            targetObject.transform.localScale = Vector3.one * 0.14f;
+            targetObject.GetComponent<Collider>().isTrigger = true;
+            targetObject.AddComponent<UR5eIkTarget>();
+            targetObject.AddComponent<UR5eTargetMouseDrag>();
+
+            var serializedSolver = new SerializedObject(solver);
+            serializedSolver.FindProperty("robot").objectReferenceValue = controller;
+            serializedSolver.FindProperty("endEffector").objectReferenceValue = endEffector;
+            serializedSolver.FindProperty("target").objectReferenceValue = targetObject.transform;
+            serializedSolver.FindProperty("solve").boolValue = false;
+            serializedSolver.ApplyModifiedPropertiesWithoutUndo();
+
+            var xrControl = robotObject.GetComponent<UR5eXrTargetController>();
+            if (xrControl == null)
+                xrControl = robotObject.AddComponent<UR5eXrTargetController>();
+            var serializedXrControl = new SerializedObject(xrControl);
+            serializedXrControl.FindProperty("solver").objectReferenceValue = solver;
+            serializedXrControl.FindProperty("robot").objectReferenceValue = controller;
+            serializedXrControl.FindProperty("target").objectReferenceValue = targetObject.transform;
+            serializedXrControl.ApplyModifiedPropertiesWithoutUndo();
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene, XrScenePath);
+            AddSceneToBuildSettings(XrScenePath);
+            Selection.activeObject = targetObject;
+            Debug.Log("XR teleoperation scene created with Meta Camera Rig, Passthrough building block, UR5e, clutch grab, reset, and emergency stop.");
+        }
+
+        private static void AddSceneToBuildSettings(string scenePath)
+        {
+            var scenes = new System.Collections.Generic.List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+            if (scenes.Exists(item => item.path == scenePath))
+                return;
+            scenes.Add(new EditorBuildSettingsScene(scenePath, true));
+            EditorBuildSettings.scenes = scenes.ToArray();
         }
 
         private static void EnsureFlyCameraInOpenTestScene()

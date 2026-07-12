@@ -54,6 +54,9 @@ means the target is outside the configured workspace. This first slice solves
 position only; tool orientation is intentionally deferred.
 Direct arrow-key joint control is disabled while the IK solver component is
 active, preventing both controllers from commanding the same drives.
+IK corrections are timestep-scaled and based on measured joint positions rather
+than previously commanded targets. The target position is rate-limited to avoid
+physics oscillation while dragging.
 
 The test camera supports Play-mode navigation in the Game view: hold the right
 mouse button to look, use WASD to move, Q/E to descend/ascend, and hold Shift
@@ -62,6 +65,30 @@ uses the Scene view.
 In the Game view, the IK sphere can also be moved directly: left-click the
 sphere and drag. Its collider is a trigger, so it does not participate in robot
 physics.
+
+## XR teleoperation scene
+
+`UR5eXRTeleoperation.unity` is generated from the Meta-configured
+`SampleScene`, retaining `[BuildingBlock] Camera Rig` and `[BuildingBlock]
+Passthrough`. Point either Quest controller at the target and hold its index
+trigger to clutch and command IK. Releasing the trigger stops command updates
+and holds the current pose. On the right controller, A resets the target to
+`tool0`; B toggles emergency stop. The scene is added to Build Settings.
+
+The left controller Menu button cycles Placement, IK, FK, and Navigation modes. Placement
+uses the left stick for head-relative floor movement and the right stick for
+yaw/height. Physically touch the right controller to a desired real-world
+location and tap its index trigger to place the robot base at the controller's
+tracked position, shown by the green marker. IK uses
+controller ray + index trigger clutching. FK uses left-stick
+horizontal movement to select a highlighted joint and right-stick vertical
+movement to command it. The right Meta/Quest button remains OS-reserved.
+An XR world-space HUD follows the headset and shows the current mode, selected
+FK joint, clutch state, and emergency-stop state. Navigation gives the Meta
+locomotion rig exclusive control of the sticks; locomotion and its comfort
+tunneling effect are disabled in all robot-control modes. Meta XR Simulator's separate
+`Move by Thumbsticks` option must remain disabled; otherwise the simulator moves
+the synthetic player regardless of the application's current mode.
 
 The six expected revolute joints are:
 

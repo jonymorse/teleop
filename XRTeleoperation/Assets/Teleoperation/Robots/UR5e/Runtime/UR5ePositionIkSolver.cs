@@ -19,10 +19,12 @@ namespace Teleoperation.Robots.UR5e
         [SerializeField, Range(0.001f, 1f)] private float damping = 0.08f;
         [SerializeField, Min(0.01f)] private float gain = 1.5f;
         [SerializeField, Min(0.1f)] private float maximumJointStepDegrees = 2f;
+        [SerializeField, Min(0.05f)] private float maximumTargetSpeed = 0.6f;
 
         private UR5eIkTarget targetFeedback;
         private ArticulationBody rootBody;
         private bool previousKeyboardControlState;
+        private Vector3 filteredTargetPosition;
 
         public Transform Target => target;
         public Transform EndEffector => endEffector;
@@ -30,6 +32,16 @@ namespace Teleoperation.Robots.UR5e
         {
             get => solve;
             set => solve = value;
+        }
+
+        public void ResetTargetToEndEffector()
+        {
+            if (target == null || endEffector == null)
+                return;
+
+            target.SetPositionAndRotation(endEffector.position, endEffector.rotation);
+            filteredTargetPosition = target.position;
+            robot?.HoldCurrentPose();
         }
 
         private void Reset()
@@ -50,6 +62,7 @@ namespace Teleoperation.Robots.UR5e
 
             if (target != null)
             {
+                filteredTargetPosition = target.position;
                 targetFeedback = target.GetComponent<UR5eIkTarget>();
                 var collider = target.GetComponent<Collider>();
                 if (collider == null)
@@ -81,8 +94,14 @@ namespace Teleoperation.Robots.UR5e
                 return;
             }
 
-            var error = target.position - endEffector.position;
-            if (error.magnitude <= positionTolerance)
+            filteredTargetPosition = Vector3.MoveTowards(
+                filteredTargetPosition,
+                target.position,
+                maximumTargetSpeed * Time.fixedDeltaTime);
+
+            var error = filteredTargetPosition - endEffector.position;
+            var finalError = target.position - endEffector.position;
+            if (finalError.magnitude <= positionTolerance)
             {
                 targetFeedback?.SetStatus(IkTargetStatus.Reachable);
                 return;
@@ -110,9 +129,10 @@ namespace Teleoperation.Robots.UR5e
                 jjt += Matrix3x3.Outer(columns[i], columns[i]);
             }
 
-            jjt.m00 += damping * damping;
-            jjt.m11 += damping * damping;
-            jjt.m22 += damping * damping;
+            var stableDamping = Mathf.Max(damping, 0.12f);
+            jjt.m00 += stableDamping * stableDamping;
+            jjt.m11 += stableDamping * stableDamping;
+            jjt.m22 += stableDamping * stableDamping;
 
             if (!jjt.TryInverse(out var inverse))
             {
@@ -120,7 +140,7 @@ namespace Teleoperation.Robots.UR5e
                 return;
             }
 
-            var solvedError = inverse * (error * gain);
+            var solvedError = inverse * (error * gain * Time.fixedDeltaTime);
             for (var i = 0; i < robot.JointCount; i++)
             {
                 var deltaRadians = Vector3.Dot(columns[i], solvedError);
@@ -128,7 +148,7 @@ namespace Teleoperation.Robots.UR5e
                     deltaRadians * Mathf.Rad2Deg,
                     -maximumJointStepDegrees,
                     maximumJointStepDegrees);
-                robot.SetTargetDegrees(i, robot.GetTargetDegrees(i) + deltaDegrees);
+                robot.SetTargetDegrees(i, robot.GetCurrentJointPositionDegrees(i) + deltaDegrees);
             }
 
             robot.ApplyTargets();

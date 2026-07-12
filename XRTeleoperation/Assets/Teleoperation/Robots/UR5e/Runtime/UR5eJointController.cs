@@ -64,6 +64,60 @@ namespace Teleoperation.Robots.UR5e
             return joints[jointIndex];
         }
 
+        public float GetCurrentJointPositionDegrees(int jointIndex)
+        {
+            ValidateIndex(jointIndex);
+            var joint = joints[jointIndex];
+            if (joint == null || joint.dofCount == 0)
+                return GetTargetDegrees(jointIndex);
+
+            var positions = joint.jointPosition;
+            return positions[0] * Mathf.Rad2Deg;
+        }
+
+        public void HoldCurrentPose()
+        {
+            for (var i = 0; i < JointCount; i++)
+                SetTargetDegrees(i, GetCurrentJointPositionDegrees(i));
+            ApplyTargets();
+        }
+
+        public void MoveBase(Vector3 worldDelta, float yawDeltaDegrees)
+        {
+            var root = GetRootBody();
+
+            if (root == null)
+                return;
+
+            var rotation = Quaternion.AngleAxis(yawDeltaDegrees, Vector3.up) * root.transform.rotation;
+            root.TeleportRoot(root.transform.position + worldDelta, rotation);
+        }
+
+        public bool TryGetBasePosition(out Vector3 position)
+        {
+            var root = GetRootBody();
+            position = root != null ? root.transform.position : transform.position;
+            return root != null;
+        }
+
+        public void PlaceBase(Vector3 worldPosition)
+        {
+            var root = GetRootBody();
+            if (root != null)
+                root.TeleportRoot(worldPosition, root.transform.rotation);
+        }
+
+        private ArticulationBody GetRootBody()
+        {
+            foreach (var body in GetComponentsInChildren<ArticulationBody>(true))
+            {
+                if (body.isRoot)
+                    return body;
+            }
+
+            return null;
+        }
+
         private void Reset()
         {
             BindAndValidateJoints();

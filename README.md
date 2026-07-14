@@ -1,533 +1,261 @@
-# XR Teleoperation Platform
+# G1 XR Teleoperation
 
-> **A mixed reality robot teleoperation platform for Meta Quest 3 built in Unity.**
+Simulation-only humanoid teleoperation for the Unitree G1, built with Unity, Meta Quest 3S, and a Python/WSL2 robotics backend. The system maps tracked wrists, Touch controller input, or optical hand keypoints to a 29-DoF G1 digital twin with Dex3 hands, while keeping physical-robot actuation explicitly outside the software boundary.
 
----
+[Portfolio case study](https://jonymorse.com/teleop/) | [Demo video](captures/quest3/2026-07-13/com.warmgarbege.xrteleoperation-20260713-211606-0_clip-12m10s-12m50s.mp4) | [Backend notes](tools/g1_backend/README.md)
 
-## Current G1 Architecture
+![System architecture: Quest input, Unity client, WSL2 solver, and G1 digital twin](portfolio/assets/teleoperation-architecture.png)
 
-The current prototype maps Meta Quest controller or optical hand input through a Unity XR client and UDP bridge to a WSL2 robotics backend, then applies the solved arm and Dex3 commands to a simulated Unitree G1 digital twin. Physical robot actuation is intentionally disabled.
+## At a glance
 
-[![G1 XR teleoperation architecture](portfolio/assets/teleoperation-architecture.svg)](https://jonymorse.com/teleop/portfolio/assets/teleoperation-architecture.svg)
+| Area | Current implementation |
+| --- | --- |
+| Status | Functional simulation prototype; no physical robot output |
+| Operator hardware | Meta Quest 3S with Touch controllers or optical hand tracking |
+| Robot model | Unitree G1 `g1_29dof_mode_11` with 14 arm joints and two 7-DoF Dex3 hands |
+| XR client | Unity 6, OpenXR, Meta XR SDK, passthrough, Android |
+| Robotics backend | Custom transport and calibration layer around Unitree's official G1 arm IK and Dex3 retargeting |
+| Transport | Versioned JSON over UDP at 30 Hz; 350 ms stale-connection threshold |
+| Simulation | Unity digital twin, contact-qualified grasping, tabletop task environment |
 
-**[Open the interactive portfolio](https://jonymorse.com/teleop/)**
+## What is implemented
 
----
+- Bilateral arm teleoperation from Touch controllers, including wrist-orientation calibration, warm-start reset, smoothing, and joint-limit validation.
+- Optical Quest hand tracking with 25 keypoints per hand and Dex3 finger retargeting.
+- Direct controller finger input for thumb, index, and power-grasp control.
+- Head-relative workspace setup with independent robot and table alignment modes.
+- Navigation and an optional egocentric camera mounted at the robot's head.
+- A mode-aware HUD that reports control state, backend connectivity, and tracking state.
+- A tabletop manipulation task with a cube, cylinder, and receptacle.
+- Contact-qualified grasps using opposing-finger and palm contacts, breakable Unity joints, slip/release behavior, bounded release velocity, and haptic feedback.
+- Command gating for tracking loss, mode changes, stale backend data, invalid packets, and operator pause.
 
-# Vision
+## System architecture
 
-The XR Teleoperation Platform is a production-oriented mixed reality application that allows an operator wearing a Meta Quest 3 to interact with, supervise, and eventually control a robotic manipulator through an intuitive XR interface.
-
-Unlike a VR simulator or game, this project is designed to resemble the architecture of a real industrial teleoperation system.
-
-The project emphasizes:
-
-* XR user experience
-* Robotics software architecture
-* Human-robot interaction (HRI)
-* Digital twins
-* Real-time networking
-* Safety systems
-* Calibration
-* Mixed reality visualization
-
-The long-term objective is to build a portfolio-quality project demonstrating the software engineering challenges encountered in modern robotics companies such as Fauna Robotics, Meta Reality Labs, Anduril, Figure AI, Tesla Optimus, Skydio, and similar organizations.
-
----
-
-# Core Concept
-
-The operator wears a Meta Quest 3 headset in passthrough mode.
-
-Inside the real environment exists a virtual robot arm that acts as the robot's digital twin.
-
-The operator manipulates the robot naturally using Quest controllers (and eventually hand tracking).
-
-Instead of directly commanding hardware, the XR application becomes the robot's operator interface.
-
-The digital twin provides:
-
-* robot visualization
-* motion preview
-* collision feedback
-* safety validation
-* calibration
-* telemetry
-* command generation
-
-Eventually, the same architecture should support both:
-
-* simulated robots
-* physical robots
-
-without requiring significant architectural changes.
-
----
-
-# Primary Goals
-
-The project should demonstrate proficiency in:
-
-* Unity
-* C#
-* OpenXR
-* Meta XR SDK
-* Mixed Reality
-* Real-time systems
-* Robot kinematics
-* Digital twins
-* Event-driven architecture
-* Clean software design
-* Low-latency communication
-* Safety-critical user interfaces
-
----
-
-# Long-Term Architecture
-
-```
-             Meta Quest 3
-                    │
-                    │
-          XR Teleoperation Client
-                    │
-     ┌──────────────┼──────────────┐
-     │              │              │
-Input System   Robot Logic     UI/HUD
-     │              │              │
-     └──────────────┼──────────────┘
-                    │
-          Command / Telemetry Layer
-                    │
-          Robot Communication Layer
-                    │
-      Simulated Robot / Physical Robot
+```text
+Meta Quest 3S
+  headset, Touch controllers, optical hands
+                |
+                | poses, controls, hand keypoints
+                v
+Unity XR client (Android)
+  modes, calibration, HUD, safety gates, digital twin, task physics
+                |
+                | JSON / UDP 7447-7448 at 30 Hz
+                v
+Windows relay
+                |
+                | UDP 7547 over WSL localhost
+                v
+Python backend (Ubuntu 22.04 / WSL2)
+  coordinate conversion, filtering, validation, solver lifecycle
+                |
+                v
+Unitree G1_29_ArmIK + Dex3 HandRetargeting
+                |
+                | 14 arm + 14 hand joint targets
+                v
+Unity G1 digital twin only
 ```
 
-The Unity application should never depend directly on a specific robot implementation.
+Unity uses right/up/forward coordinates. The backend converts these to Unitree's forward/left/up convention before solving. A request contains two wrist transforms, the current 14-joint arm state, and, when hand retargeting is active, 25 three-dimensional keypoints for each hand. A valid response contains 14 arm targets and optionally 14 Dex3 hand targets, all in radians.
 
-Everything should communicate through well-defined interfaces.
+The Windows relay exists because WSL2 does not reliably receive subnet UDP broadcasts. It exposes ports 7447 and 7448 to the Quest and forwards solver traffic to WSL localhost port 7547.
 
----
+## Implementation ownership
 
-# Design Philosophy
+This project is an integration, interaction, and simulation layer. It does not claim authorship of Unitree's numerical solvers.
 
-The project should prioritize:
+| Custom implementation in this repository | Upstream Unitree implementation |
+| --- | --- |
+| Quest/Unity control modes and input mapping | `G1_29_ArmIK` numerical arm solver |
+| Versioned Unity-to-Python UDP protocol | `HandRetargeting` for `HandType.UNITREE_DEX3` |
+| Windows-to-WSL2 relay and process launcher | G1 and Dex3 robot descriptions and meshes |
+| Unity-to-Unitree coordinate conversion | Solver dependencies and model configuration |
+| Wrist neutral calibration and solver reset |  |
+| Filtering, packet validation, timeouts, and simulation-only gate |  |
+| Digital-twin control, HUD, alignment, task physics, and grasp model |  |
 
-* maintainability
-* extensibility
-* modularity
-* readability
-* testability
+The backend imports the solver and retargeter from Unitree's [`xr_teleoperate`](https://github.com/unitreerobotics/xr_teleoperate) project. The tested local checkout is commit `7dc9aa1a6edbf4a9f4f887d8ab6fc449ea5135f6`. G1 and Dex3 assets originate from [`unitree_ros`](https://github.com/unitreerobotics/unitree_ros) at commit `d96d8f63ae17a7108d4f7229c00ef875ba7129c9`.
 
-over rapid feature implementation.
+## Safety boundary
 
-Every feature should be designed as though it will eventually be used with real robotic hardware.
+Every backend request must include `simulationOnly: true`. Requests without it are rejected. The Python backend does not import or call Unitree's DDS controller, and the command path terminates at the Unity digital twin.
 
----
+Additional software safeguards include:
 
-# Major Systems
+- explicit operator arming before tracked motion is applied;
+- automatic pause on tracking loss or control-mode change;
+- rejection of malformed packets and incorrect joint counts;
+- stale-command detection after 350 ms;
+- robot-model joint limits and bounded physics release velocity;
+- a software emergency pause on the right controller's B button.
 
-## 1. XR Interaction
+The B-button action is not a hardware emergency stop. This prototype is not safety certified and must not be connected to a physical robot without a separately reviewed hardware interface, watchdogs, velocity and torque limits, collision checking, an operator-enable device, and a physical emergency stop.
 
-Responsible for:
+## Tested configuration
 
-* headset tracking
-* controller tracking
-* hand tracking (future)
-* grabbing
-* object manipulation
-* passthrough experience
-* spatial interactions
+| Component | Version or target |
+| --- | --- |
+| Unity Editor | 6000.3.2f1 |
+| Build target | Android, minimum API level 32 |
+| Application ID | `com.warmgarbege.xrteleoperation` |
+| Headset | Meta Quest 3S |
+| Meta XR SDK | 203.0.0 |
+| OpenXR Plugin | 1.17.1 |
+| Input System | 1.17.0 |
+| Universal Render Pipeline | 17.3.0 |
+| Unity URDF Importer | 0.5.2 |
+| WSL distribution | Ubuntu 22.04 under WSL2 |
+| Backend Python | 3.10.20 |
 
----
+## Run the project
 
-## 2. Robot System
+### 1. Open the Unity client
 
-Represents the robot itself.
+Open the `XRTeleoperation` directory in Unity Hub with Unity 6000.3.2f1. The build contains one enabled scene:
 
-Responsibilities:
-
-* robot hierarchy
-* joints
-* end effector
-* robot state
-* joint limits
-* kinematics
-* robot interfaces
-
-Future robot implementations:
-
-* Simulated Robot
-* ROS Robot
-* Physical Robot
-* Network Robot
-
----
-
-## 3. Digital Twin
-
-The digital twin is the visual representation of the robot.
-
-Its responsibilities include:
-
-* displaying robot state
-* displaying planned motion
-* showing target pose
-* displaying prediction
-* operator visualization
-
-The digital twin should never simply mirror transforms.
-
-It should communicate meaningful information to the operator.
-
----
-
-## 4. Inverse Kinematics
-
-The IK system converts desired end-effector positions into robot joint angles.
-
-Responsibilities:
-
-* solve reachable poses
-* detect unreachable poses
-* enforce joint limits
-* optimize robot configuration
-
-Initially this will be a simple planar arm.
-
-Future versions may support:
-
-* 6 DOF arms
-* Jacobian methods
-* numerical IK
-* industrial manipulators
-
----
-
-## 5. Safety System
-
-Safety is a first-class feature.
-
-Responsibilities:
-
-* emergency stop
-* workspace limits
-* joint limits
-* collision validation
-* stale command rejection
-* invalid pose rejection
-* operator warnings
-
-The robot should never execute unsafe commands.
-
----
-
-## 6. Calibration
-
-Calibration aligns the XR coordinate system with the robot coordinate system.
-
-Future workflow:
-
-1. Place robot base
-2. Identify calibration reference
-3. Compute transform
-4. Validate alignment
-5. Save calibration profile
-
-Eventually this system should support:
-
-* fiducial markers
-* manual alignment
-* multi-point calibration
-
----
-
-## 7. Networking
-
-The networking layer should remain independent of robot logic.
-
-Future protocols:
-
-* UDP
-* TCP
-* REST
-* WebRTC
-
-Capabilities:
-
-* telemetry
-* robot commands
-* state synchronization
-* session management
-
-Initially, networking will connect to a simulated robot backend.
-
----
-
-## 8. Operator Interface
-
-The XR HUD should provide only actionable information.
-
-Examples:
-
-* robot status
-* battery
-* latency
-* packet loss
-* recording status
-* current mode
-* emergency stop
-* calibration state
-
-The interface should minimize cognitive load while remaining accessible during operation.
-
----
-
-## 9. Recording
-
-Sessions should be recordable for replay and analysis.
-
-Future recorded data:
-
-* headset pose
-* controller pose
-* robot pose
-* telemetry
-* commands
-* timestamps
-* operator events
-
----
-
-# Development Roadmap
-
----
-
-## Phase 1 — Foundation
-
-Goal:
-
-Establish a working Quest 3 mixed reality application.
-
-Deliverables:
-
-* Unity project
-* Meta XR SDK
-* OpenXR
-* Passthrough
-* XR simulator
-* Scene organization
-
-Status:
-
-**Completed**
-
----
-
-## Phase 2 — Robot Prototype
-
-Goal:
-
-Create a simple robot arm.
-
-Deliverables:
-
-* robot hierarchy
-* movable target
-* inverse kinematics
-* joint limits
-* basic visualization
-
-Status:
-
-**Current Phase**
-
----
-
-## Phase 3 — Digital Twin
-
-Goal:
-
-Separate target state from actual robot state.
-
-Deliverables:
-
-* target pose
-* planned pose
-* actual pose
-* interpolation
-* trajectory visualization
-
----
-
-## Phase 4 — Safety
-
-Goal:
-
-Introduce robotics safety concepts.
-
-Deliverables:
-
-* emergency stop
-* invalid target detection
-* workspace constraints
-* collision detection
-* safety warnings
-
----
-
-## Phase 5 — Calibration
-
-Goal:
-
-Allow placement and alignment of the robot within the user's environment.
-
-Deliverables:
-
-* robot placement
-* calibration workflow
-* persistent transforms
-
----
-
-## Phase 6 — Networking
-
-Goal:
-
-Separate Unity from robot execution.
-
-Deliverables:
-
-* robot backend
-* telemetry
-* command streaming
-* latency simulation
-* reconnect logic
-
----
-
-## Phase 7 — Teleoperation
-
-Goal:
-
-Operate the robot through XR.
-
-Deliverables:
-
-* controller manipulation
-* precision mode
-* clutching
-* trajectory confirmation
-
----
-
-## Phase 8 — Recording
-
-Goal:
-
-Record and replay operator sessions.
-
-Deliverables:
-
-* playback
-* timeline
-* telemetry logs
-* pose replay
-
----
-
-## Phase 9 — Physical Robot
-
-Goal:
-
-Replace the simulator with a real robot.
-
-Deliverables:
-
-* hardware interface
-* calibration
-* real telemetry
-* live robot execution
-
----
-
-# Initial MVP
-
-The first public demo should demonstrate:
-
-* Meta Quest passthrough
-* Robot placement
-* Digital twin visualization
-* End-effector manipulation
-* Inverse kinematics
-* Joint limits
-* Reachability validation
-* Safety feedback
-* Emergency stop
-
-No networking or physical robot is required for the MVP.
-
----
-
-# Future Stretch Goals
-
-Possible extensions include:
-
-* hand tracking
-* ROS2 integration
-* Isaac Sim support
-* trajectory planning
-* motion recording
-* multiple robot types
-* AI-assisted operator guidance
-* voice commands
-* collaborative teleoperation
-* force feedback integration
-* sensor overlays
-* thermal visualization
-* point cloud visualization
-* depth camera integration
-* robot camera streaming
-
----
-
-# Repository Structure
-
+```text
+Assets/Teleoperation/Scenes/G1XRTeleoperation.unity
 ```
+
+For a headset build, select the Android build profile at `Assets/Settings/Build Profiles/Meta Quest.asset`, connect the Quest through USB or ADB over Wi-Fi, and use **Build and Run**. The project targets Android API level 32 or later and uses a single GameActivity entry point.
+
+The Unity scene can run without the Python backend for navigation, alignment, local debug control, and task-physics inspection. Backend Teleoperation and Quest Hand Retargeting require the following steps.
+
+### 2. Install the Unitree backend
+
+In Ubuntu 22.04 under WSL2, install Unitree's `xr_teleoperate` repository and its G1 dependencies by following the upstream project's instructions. The tested environment uses Python 3.10 with Pinocchio, CasADi, and the bundled `dex-retargeting` package.
+
+The provided launcher currently expects these workstation-specific paths:
+
+```text
+Python:       /home/jomo/miniforge3/envs/tv/bin/python
+Unitree repo: /home/jomo/Projects/xr_teleoperate
+WSL distro:   Ubuntu-22.04
+```
+
+On another workstation, update the Python path in `tools/g1_backend/start_wsl_backend.ps1` and either change its default `UnitreeRepo` value or supply that parameter explicitly. Additional installation and diagnostic commands are documented in [tools/g1_backend/README.md](tools/g1_backend/README.md).
+
+### 3. Configure the Quest-to-PC connection
+
+The Quest and Windows PC must be on the same LAN, and Windows Firewall must allow inbound and outbound UDP traffic on ports 7447 and 7448 for private networks.
+
+The checked-in Unity bridge currently targets `192.168.1.209`. If the PC's LAN address changes, update `backendHost` on the `G1TeleoperationBridge` component in Unity and rebuild the APK.
+
+### 4. Start the solver
+
+From the repository root, double-click:
+
+```text
+Start G1 Backend.cmd
+```
+
+Or run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/g1_backend/start_wsl_backend.ps1
+```
+
+Keep the terminal open. Wait for the green `READY` message before entering Backend Teleoperation or Quest Hand Retargeting. The launcher starts the WSL solver on port 7547, waits for it to initialize, and then exposes the Windows relay on ports 7447 and 7448.
+
+For a network-only diagnostic that deliberately holds the robot's current joint angles:
+
+```powershell
+python tools/g1_backend/g1_teleop_backend.py --connection-test
+```
+
+## Operator controls
+
+### Touch controllers
+
+| Input | Action |
+| --- | --- |
+| Left Menu | Next mode |
+| Left Grip + Left Menu | Previous mode |
+| Right A | Start or pause a control mode; reset the layout in an alignment mode |
+| Right B | Software emergency pause |
+| Left X | Move the robot and Dex3 hands to Home; reset task objects |
+| Left Y | Toggle the egocentric robot-head camera |
+| Left thumbstick click, while paused | Show or hide the HUD |
+| Right thumbstick click, while armed in a tracked-arm mode | Recapture neutral wrist orientation and clear solver history |
+| Thumbsticks in Backend Teleoperation | Control the corresponding thumb joints |
+| Index triggers in Backend Teleoperation | Control the corresponding index fingers |
+| Hand grips in Backend Teleoperation | Control middle-finger and power-grasp closure |
+
+Navigation uses the thumbsticks to translate and turn the viewpoint. Robot Alignment and Table Alignment support controller-stick fine adjustment; touching the right controller to a target surface and pressing its trigger places the selected workspace element at that contact point.
+
+### Optical hands
+
+Quest Hand Retargeting uses both tracked hand skeletons. Face the left palm toward the headset to activate the gesture region, then hold a gesture for 0.45 seconds. The visual palm panel is intentionally suppressed in this mode so that it does not flash into view during manipulation.
+
+| Left-hand pinch | Action |
+| --- | --- |
+| Thumb + index | Next mode |
+| Thumb + middle | Previous mode |
+| Thumb + ring | Start or pause control |
+| Thumb + little finger | Home |
+
+Keep both hands visible to the headset cameras. If either skeleton is lost, the mode freezes the last valid target rather than extrapolating motion.
+
+## Control modes
+
+The default mode cycle contains:
+
+- **Backend Teleoperation** - Touch-controller wrists drive Unitree arm IK; controller analog inputs drive Dex3 fingers.
+- **Quest Hand Retargeting** - optical wrist poses and finger keypoints drive arm IK and Dex3 retargeting.
+- **Navigation** - move the operator viewpoint without commanding the robot.
+- **Robot Alignment** - reposition and rotate the robot relative to the tracked room.
+- **Table Alignment** - reposition and rotate the manipulation environment independently.
+
+Home is an immediate action rather than a persistent mode. Additional local FK, body-tracking, and finger-tracking modes remain available for development but are intentionally excluded from the normal operator cycle.
+
+## Manipulation model
+
+The task scene contains one cube, one cylinder, and a receptacle. A grasp is accepted only when the hand has sufficient closure intent and a qualifying combination of thumb, opposing-finger, or palm contacts. The object is then coupled with a limited, breakable `ConfigurableJoint` whose strength scales with contact quality and squeeze. Contact loss, excessive separation, or release intent allows the object to slip or detach.
+
+This produces more credible behavior than parenting an object to the hand, but it remains a physics approximation. There is no tactile sensing, force control, deformable contact, or hardware-derived friction model. The goal volume reports success only after an object is released and stable inside the receptacle.
+
+## Repository layout
+
+```text
 teleop/
-
-├── Assets/
-│   ├── Core/
-│   ├── Robot/
-│   ├── XR/
-│   ├── UI/
-│   ├── Networking/
-│   ├── Calibration/
-│   ├── Recording/
-│   ├── Safety/
-│   ├── Utilities/
-│   ├── Prefabs/
-│   ├── Materials/
-│   └── Scenes/
-│
-├── Docs/
-│
-├── Packages/
-│
-├── ProjectSettings/
-│
-└── README.md
+|-- XRTeleoperation/                         Unity project
+|   |-- Assets/Teleoperation/Scenes/        G1 XR scene
+|   `-- Assets/Teleoperation/Robots/G1/     model, runtime control, IK bridge, Dex3
+|-- tools/g1_backend/                       Python backend, WSL launcher, UDP relay
+|-- tools/export_g1_web.py                  portfolio GLB and joint-metadata exporter
+|-- portfolio/                              static technical case study
+|-- captures/quest3/                        recorded headset demonstrations
+`-- Start G1 Backend.cmd                    workstation backend entry point
 ```
 
----
+To preview the portfolio locally:
 
-# Guiding Principles
+```powershell
+python -m http.server 8765
+```
 
-Every architectural decision should answer one question:
+Then open `http://localhost:8765/portfolio/`.
 
-> **Would this design still make sense if a real industrial robot were connected tomorrow?**
+## Current limitations
 
-If the answer is yes, it is likely the correct long-term direction.
+- No physical G1 command output, DDS transport, or hardware feedback.
+- No whole-body balance, locomotion, or lower-body teleoperation.
+- No collision-aware motion planning or self-collision avoidance in the IK backend.
+- No force, torque, or tactile feedback; haptics are generated from Unity contact state.
+- Quest optical hand fidelity depends on camera visibility and degrades under occlusion.
+- Human-to-Dex3 morphology differences limit exact finger-pose correspondence.
+- The launcher paths and checked-in backend IP are specific to the current development workstation.
+- Grasping is a Unity rigid-body approximation, not a validated dynamics model of a physical G1 or Dex3 hand.
 
-The project should be treated as a software platform rather than a Unity demonstration, emphasizing realistic engineering tradeoffs, modularity, and production-minded design throughout its evolution.
+## Attribution and licensing
+
+G1 and Dex3 assets in this repository retain Unitree's BSD 3-Clause license notices:
+
+- [G1 asset license](XRTeleoperation/Assets/Teleoperation/Robots/G1/UNITREE_LICENSE.txt)
+- [Dex3 asset license](XRTeleoperation/Assets/Teleoperation/Robots/G1/Dex3/UNITREE_ROS_LICENSE.txt)
+
+The external `xr_teleoperate` backend is distributed by Unitree under the Apache License 2.0; consult its repository for its complete dependency and attribution requirements. This project is independent and is not sponsored, endorsed, or certified by Unitree Robotics or Meta.
+
+There is currently no repository-wide license. Unless a file or included third-party notice states otherwise, no general reuse license is granted by this repository.

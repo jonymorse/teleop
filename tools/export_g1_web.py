@@ -20,15 +20,15 @@ URDF = ROOT / "XRTeleoperation/Assets/Teleoperation/Robots/G1/Model/g1_29dof.urd
 OUTPUT = ROOT / "portfolio/assets/g1-29dof.glb"
 JOINTS_OUTPUT = ROOT / "portfolio/assets/g1-29dof-joints.json"
 
-# A relaxed standing pose is easier to read than the URDF's arms-forward zero
-# configuration. Values are radians and remain inside the source joint limits.
+# Use the URDF's vertical shoulder zero with only a small outward roll. Values
+# are radians and remain inside the source joint limits.
 DISPLAY_POSE = {
-    "left_shoulder_pitch_joint": 1.28,
-    "right_shoulder_pitch_joint": 1.28,
-    "left_shoulder_roll_joint": 0.12,
-    "right_shoulder_roll_joint": -0.12,
-    "left_elbow_joint": 0.32,
-    "right_elbow_joint": 0.32,
+    "left_shoulder_pitch_joint": 0.0,
+    "right_shoulder_pitch_joint": 0.0,
+    "left_shoulder_roll_joint": 0.06,
+    "right_shoulder_roll_joint": -0.06,
+    "left_elbow_joint": 1.52,
+    "right_elbow_joint": 1.52,
 }
 
 

@@ -1,90 +1,62 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
-  <title id="title">G1 XR teleoperation architecture</title>
-  <desc id="desc">A concise four-stage diagram: Meta Quest operator, Unity XR client, WSL2 robotics backend, and simulated Unitree G1 digital twin.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">G1 XR teleoperation pipeline</title>
+  <desc id="desc">Meta Quest tracking passes through a Unity XR client and a custom Python bridge that integrates Unitree's official G1 inverse kinematics and Dex3 retargeting. Commands drive a simulated G1 and visual feedback returns to the operator.</desc>
   <defs>
     <style>
-      .bg{fill:#0b0b0a}.card{fill:#11110f;stroke:#383631;stroke-width:1.5}.media{fill:#080807;stroke:#292824}.rule{stroke:#37352f;stroke-width:1}.eyebrow{fill:#d96a3a;font:700 12px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.7px}.title{fill:#f3f0e8;font:650 34px Inter,Arial,sans-serif;letter-spacing:-.8px}.card-title{fill:#f3f0e8;font:650 25px Inter,Arial,sans-serif;letter-spacing:-.4px}.body{fill:#aca79d;font:400 15px Inter,Arial,sans-serif}.mono{fill:#706d66;font:600 11px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.1px}.value{fill:#f3f0e8;font:600 14px Inter,Arial,sans-serif}.arrow{stroke:#d96a3a;stroke-width:3;fill:none}.feedback{stroke:#817d74;stroke-width:1.5;stroke-dasharray:7 8;fill:none}.icon{stroke:#f3f0e8;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}.icon-muted{stroke:#817d74;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}.dot{fill:#d96a3a;stroke:#f3f0e8;stroke-width:1}.boundary{fill:#100d0b;stroke:#60311f;stroke-width:1.5;stroke-dasharray:7 7}
+      .bg{fill:var(--diagram-bg,#0b0b0a)}.card{fill:var(--diagram-panel,#10100e);stroke:var(--diagram-line,#3b3934);stroke-width:1.5}.media{fill:var(--diagram-media,#080807);stroke:var(--diagram-line,#292824);stroke-width:1}.media-clear{fill:none;stroke:none}.rule{stroke:var(--diagram-line,#37352f);stroke-width:1}.eyebrow{fill:var(--diagram-accent,#d96a3a);font:700 12px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.6px}.title{fill:var(--diagram-text,#f3f0e8);font:650 38px Inter,Arial,sans-serif;letter-spacing:-1px}.card-title{fill:var(--diagram-text,#f3f0e8);font:650 25px Inter,Arial,sans-serif;letter-spacing:-.4px}.body{fill:var(--diagram-muted,#aca79d);font:400 15px Inter,Arial,sans-serif}.mono{fill:var(--diagram-quiet,#77736b);font:600 11px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.05px}.module-title{fill:var(--diagram-text,#f3f0e8);font:650 20px Inter,Arial,sans-serif}.module-body{fill:var(--diagram-muted,#aca79d);font:400 13px Inter,Arial,sans-serif}.arrow{stroke:var(--diagram-accent,#d96a3a);stroke-width:3;fill:none}.feedback{stroke:var(--diagram-quiet,#817d74);stroke-width:1.5;stroke-dasharray:7 8;fill:none}.wrapper{fill:var(--diagram-accent-soft,#130e0c);stroke:var(--diagram-accent,#9a4d2d);stroke-width:1.5}.unitree{fill:var(--diagram-panel-2,#151513);stroke:var(--diagram-line,#4a4741);stroke-width:1.5}.accent-fill{fill:var(--diagram-accent,#d96a3a)}.feedback-fill{fill:var(--diagram-quiet,#817d74)}.boundary{fill:var(--diagram-accent-soft,#100d0b);stroke:var(--diagram-accent,#60311f);stroke-width:1.5}
     </style>
-    <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#d96a3a"/></marker>
-    <marker id="feedback-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#817d74"/></marker>
-    <clipPath id="unity-clip"><rect x="423" y="346" width="330" height="190" rx="2"/></clipPath>
-    <clipPath id="g1-clip"><rect x="1215" y="236" width="292" height="400" rx="2"/></clipPath>
+    <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="accent-fill" d="M0 0L10 5L0 10z"/></marker>
+    <marker id="feedback-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="feedback-fill" d="M0 0L10 5L0 10z"/></marker>
+    <clipPath id="quest-clip"><rect x="72" y="304" width="272" height="288" rx="2"/></clipPath>
+    <clipPath id="unity-clip"><rect x="440" y="304" width="302" height="288" rx="2"/></clipPath>
+    <clipPath id="g1-clip"><rect x="1216" y="304" width="312" height="288" rx="2"/></clipPath>
   </defs>
 
   <rect class="bg" width="1600" height="900"/>
-  <text class="eyebrow" x="48" y="52">SYSTEM ARCHITECTURE / SIMULATION PROTOTYPE</text>
-  <text class="title" x="48" y="94">XR teleoperation, end to end</text>
-  <text class="body" x="1552" y="61" text-anchor="end">Meta Quest 3S → Unitree G1</text>
-  <text class="mono" x="1552" y="89" text-anchor="end">UNITY 6 · WSL2 · OPENXR</text>
-  <line class="rule" x1="48" y1="122" x2="1552" y2="122"/>
+  <text class="eyebrow" x="48" y="58">SYSTEM ARCHITECTURE</text>
+  <text class="title" x="48" y="105">XR teleoperation pipeline</text>
+  <line class="rule" x1="48" y1="136" x2="1552" y2="136"/>
 
-  <!-- 01 Operator -->
-  <rect class="card" x="48" y="170" width="300" height="520" rx="4"/>
-  <text class="eyebrow" x="72" y="202">01 / OPERATOR</text>
-  <text class="card-title" x="72" y="239">Meta Quest 3S</text>
-  <text class="body" x="72" y="266">Hands or Touch controllers</text>
-  <line class="rule" x1="72" y1="290" x2="324" y2="290"/>
-  <g transform="translate(93 325)">
-    <path class="icon" d="M20 28c13-17 34-23 85-23s72 6 85 23l-10 62c-4 19-20 31-39 31h-16l-20-23-20 23H69c-19 0-35-12-39-31z"/>
-    <path class="icon-muted" d="M34 39c20-12 122-12 142 0M58 69h24m46 0h24"/>
-  </g>
-  <g transform="translate(99 495)">
-    <path class="icon-muted" d="M15 0c14 0 26 12 26 26v54c0 12-9 21-21 21S0 92 0 80V26C0 12 7 0 15 0zm164 0c-14 0-26 12-26 26v54c0 12 9 21 21 21s20-9 20-21V26c0-14-7-26-15-26z"/>
-    <circle class="dot" cx="21" cy="25" r="5"/><circle class="dot" cx="173" cy="25" r="5"/>
-  </g>
-  <text class="mono" x="198" y="632" text-anchor="middle">6-DOF POSE · HAND LANDMARKS</text>
+  <rect class="card" x="48" y="190" width="320" height="450" rx="3"/>
+  <text class="eyebrow" x="72" y="227">01 / INPUT</text>
+  <text class="card-title" x="72" y="270">Meta Quest 3S</text>
+  <rect class="media-clear" x="72" y="304" width="272" height="288" rx="2"/>
+  <image x="72" y="304" width="272" height="288" xlink:href="quest-3s-diagram-render.png" href="quest-3s-diagram-render.png" preserveAspectRatio="xMidYMid meet" clip-path="url(#quest-clip)"/>
 
-  <!-- 02 Unity -->
-  <rect class="card" x="400" y="170" width="376" height="520" rx="4"/>
-  <text class="eyebrow" x="424" y="202">02 / XR CLIENT</text>
-  <text class="card-title" x="424" y="239">Unity runtime</text>
-  <text class="body" x="424" y="266">Calibration · modes · safety</text>
-  <line class="rule" x1="424" y1="290" x2="752" y2="290"/>
-  <rect class="media" x="423" y="346" width="330" height="190" rx="2"/>
-  <image x="423" y="346" width="330" height="190" xlink:href="g1-teleoperation-poster.jpg" href="g1-teleoperation-poster.jpg" preserveAspectRatio="xMidYMid slice" clip-path="url(#unity-clip)"/>
-  <rect x="423" y="503" width="330" height="33" fill="#080807" opacity=".84"/>
-  <text class="mono" x="439" y="524">QUEST VIEW · UNITY DIGITAL TWIN</text>
-  <g transform="translate(424 573)"><circle class="dot" cx="5" cy="5" r="5"/><text class="value" x="21" y="10">Frame calibration</text><circle class="dot" cx="170" cy="5" r="5"/><text class="value" x="186" y="10">Safety gate</text></g>
-  <text class="mono" x="424" y="632">PAUSE · HOME · TRACKING FREEZE · E-STOP</text>
+  <rect class="card" x="416" y="190" width="350" height="450" rx="3"/>
+  <text class="eyebrow" x="440" y="227">02 / CLIENT</text>
+  <text class="card-title" x="440" y="270">Unity XR</text>
+  <rect class="media" x="440" y="304" width="302" height="288" rx="2"/>
+  <image x="440" y="304" width="302" height="288" xlink:href="g1-teleoperation-frame-04s.jpg" href="g1-teleoperation-frame-04s.jpg" preserveAspectRatio="xMidYMid slice" clip-path="url(#unity-clip)"/>
 
-  <!-- 03 Backend -->
-  <rect class="card" x="828" y="170" width="316" height="520" rx="4"/>
-  <text class="eyebrow" x="852" y="202">03 / ROBOTICS BACKEND</text>
-  <text class="card-title" x="852" y="239">WSL2 solver</text>
-  <text class="body" x="852" y="266">Arm IK · Dex3 retargeting</text>
-  <line class="rule" x1="852" y1="290" x2="1120" y2="290"/>
-  <g transform="translate(875 341)">
-    <rect class="icon" x="0" y="0" width="222" height="142" rx="5"/>
-    <path class="icon" d="M-20 169h262l-23 22H3z"/>
-    <path class="icon-muted" d="M35 98l42-42 46 21 54-53"/>
-    <circle class="dot" cx="35" cy="98" r="5"/><circle class="dot" cx="77" cy="56" r="5"/><circle class="dot" cx="123" cy="77" r="5"/><circle class="dot" cx="177" cy="24" r="5"/>
-  </g>
-  <text class="value" x="852" y="578">Dual-arm targets</text><text class="mono" x="1120" y="578" text-anchor="end">14 JOINTS</text>
-  <line class="rule" x1="852" y1="596" x2="1120" y2="596"/>
-  <text class="value" x="852" y="625">Dex3 hand commands</text><text class="mono" x="1120" y="625" text-anchor="end">14 JOINTS</text>
-  <text class="eyebrow" x="852" y="660">≈5 MS SOLVE</text>
+  <rect class="card" x="814" y="190" width="330" height="450" rx="3"/>
+  <text class="eyebrow" x="838" y="227">03 / BACKEND</text>
+  <text class="card-title" x="838" y="270">Custom Python bridge</text>
+  <rect class="media" x="838" y="304" width="282" height="288" rx="2"/>
+  <rect class="wrapper" x="862" y="330" width="234" height="236" rx="4"/>
+  <text class="eyebrow" x="882" y="359">OUR INTEGRATION</text>
+  <rect class="unitree" x="882" y="383" width="194" height="135" rx="3"/>
+  <text class="mono" x="902" y="411">UNITREE OFFICIAL</text>
+  <text class="module-title" x="902" y="446">G1 arm IK</text>
+  <line class="rule" x1="902" y1="461" x2="1056" y2="461"/>
+  <text class="module-title" x="902" y="492">Dex3 retargeting</text>
 
-  <!-- 04 G1 -->
-  <rect class="card" x="1196" y="170" width="356" height="520" rx="4"/>
-  <text class="eyebrow" x="1220" y="202">04 / SIMULATION</text>
-  <text class="card-title" x="1220" y="239">G1 digital twin</text>
-  <text class="body" x="1220" y="266">29 DoF · Dex3 · physics</text>
-  <line class="rule" x1="1220" y1="290" x2="1528" y2="290"/>
-  <rect class="media" x="1215" y="306" width="318" height="330" rx="2"/>
-  <image x="1215" y="236" width="318" height="400" xlink:href="g1-diagram-render.png" href="g1-diagram-render.png" preserveAspectRatio="xMidYMid meet" clip-path="url(#g1-clip)"/>
-  <text class="mono" x="1374" y="665" text-anchor="middle">GRASP · SLIP · RELEASE</text>
+  <rect class="card" x="1192" y="190" width="360" height="450" rx="3"/>
+  <text class="eyebrow" x="1216" y="227">04 / OUTPUT</text>
+  <text class="card-title" x="1216" y="270">G1 simulation</text>
+  <rect class="media-clear" x="1216" y="304" width="312" height="288" rx="2"/>
+  <image x="1216" y="304" width="312" height="288" xlink:href="g1-diagram-render.png" href="g1-diagram-render.png" preserveAspectRatio="xMidYMid meet" clip-path="url(#g1-clip)"/>
 
-  <!-- Command path -->
-  <path class="arrow" d="M348 430h52" marker-end="url(#arrowhead)"/><text class="eyebrow" x="374" y="414" text-anchor="middle">TRACKING</text>
-  <path class="arrow" d="M776 430h52" marker-end="url(#arrowhead)"/><text class="eyebrow" x="802" y="414" text-anchor="middle">UDP</text>
-  <path class="arrow" d="M1144 430h52" marker-end="url(#arrowhead)"/><text class="eyebrow" x="1170" y="414" text-anchor="middle">JOINTS</text>
+  <path class="arrow" d="M368 448h48" marker-end="url(#arrowhead)"/>
+  <path class="arrow" d="M766 448h48" marker-end="url(#arrowhead)"/>
+  <path class="arrow" d="M1144 448h48" marker-end="url(#arrowhead)"/>
 
-  <!-- Feedback and hardware boundary -->
-  <path class="feedback" d="M1374 690v43H198v-43" marker-end="url(#feedback-head)"/>
-  <rect class="bg" x="662" y="718" width="276" height="30"/>
-  <text class="mono" x="800" y="738" text-anchor="middle">VISUAL FEEDBACK + ROBOT VIEW</text>
-  <rect class="boundary" x="48" y="785" width="1504" height="70" rx="4"/>
-  <circle cx="72" cy="820" r="4" fill="#d96a3a"/>
-  <text class="eyebrow" x="88" y="824">PHYSICAL G1 OUTPUT DISABLED</text>
-  <text class="body" x="1528" y="824" text-anchor="end">Simulation-first safety boundary</text>
+  <path class="feedback" d="M1372 640v72H208v-72" marker-end="url(#feedback-head)"/>
+  <rect class="bg" x="718" y="697" width="164" height="30"/>
+  <text class="mono" x="800" y="717" text-anchor="middle">VISUAL FEEDBACK</text>
+
+  <rect class="boundary" x="48" y="784" width="1504" height="68" rx="3"/>
+  <circle class="accent-fill" cx="74" cy="818" r="4"/>
+  <text class="eyebrow" x="92" y="822">SIMULATION ONLY</text>
+  <text class="body" x="1528" y="822" text-anchor="end">Physical robot actuation disabled</text>
 </svg>

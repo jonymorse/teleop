@@ -42,3 +42,12 @@ Desktop.ini
 
 # Crash reports
 crashlytics-build.properties
+
+# Local editor recovery and runtime caches
+XRTeleoperation/Assets/_Recovery/
+__pycache__/
+*.py[cod]
+
+# Raw headset captures are local-only; keep the edited portfolio demo
+captures/**/*.mp4
+!captures/quest3/2026-07-13/com.warmgarbege.xrteleoperation-20260713-211606-0_clip-12m10s-12m50s.mp4

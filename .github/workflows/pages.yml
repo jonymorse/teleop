@@ -1,0 +1,61 @@
+name: Deploy portfolio to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "portfolio/**"
+      - "captures/quest3/2026-07-13/com.warmgarbege.xrteleoperation-20260713-211606-0_clip-12m10s-12m50s.mp4"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Assemble static site
+        shell: bash
+        run: |
+          mkdir -p _site/captures/quest3/2026-07-13
+          cp -R portfolio _site/portfolio
+          cp captures/quest3/2026-07-13/com.warmgarbege.xrteleoperation-20260713-211606-0_clip-12m10s-12m50s.mp4 _site/captures/quest3/2026-07-13/
+          cat > _site/index.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta http-equiv="refresh" content="0; url=portfolio/">
+            <title>G1 XR Teleoperation</title>
+          </head>
+          <body><a href="portfolio/">Open G1 XR Teleoperation</a></body>
+          </html>
+          EOF
+          touch _site/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

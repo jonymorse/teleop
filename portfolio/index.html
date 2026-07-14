@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#090908">
   <title>G1 XR Teleoperation — Robotics Portfolio</title>
   <link rel="stylesheet" href="styles.css">
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#project">Skip to project</a>
@@ -26,14 +27,49 @@
 
     <main class="project" id="project">
       <section class="demo-panel" aria-labelledby="project-title">
-        <div class="panel-label"><span>00 / Live system</span><span>40-second task</span></div>
-        <figure>
+        <div class="panel-label">
+          <span>00 / System viewer</span>
+          <div class="view-switch" role="group" aria-label="System viewer mode">
+            <button class="view-button is-active" type="button" data-view="demo">Demo</button>
+            <button class="view-button" type="button" data-view="model">29-DoF model</button>
+          </div>
+        </div>
+        <figure class="media-view is-active" data-view-panel="demo">
           <video controls playsinline preload="metadata" poster="assets/g1-teleoperation-poster.jpg">
             <source src="../captures/quest3/2026-07-13/com.warmgarbege.xrteleoperation-20260713-211606-0_clip-12m10s-12m50s.mp4" type="video/mp4">
             Your browser does not support embedded video.
           </video>
           <figcaption>Hand-driven pick and place · Quest capture · Unity simulation</figcaption>
         </figure>
+        <div class="model-view" data-view-panel="model" hidden>
+          <model-viewer
+            id="g1-model"
+            src="assets/g1-29dof.glb"
+            alt="Interactive 3D model of the Unitree G1 humanoid with 29 movable joint markers"
+            camera-controls
+            auto-rotate
+            auto-rotate-delay="1200"
+            rotation-per-second="8deg"
+            camera-orbit="32deg 76deg 2.55m"
+            camera-target="0m -0.13m 0m"
+            min-camera-orbit="auto 45deg 1.75m"
+            max-camera-orbit="auto 105deg 3m"
+            shadow-intensity="0.8"
+            shadow-softness="0.85"
+            exposure="1.15"
+            interaction-prompt="none">
+          </model-viewer>
+          <div class="model-status">
+            <span class="model-kicker">Original URDF geometry</span>
+            <strong id="joint-name">29 movable joints</strong>
+            <span id="joint-detail">Select a marker or cycle through the kinematic chain.</span>
+          </div>
+          <div class="joint-controls">
+            <button type="button" id="previous-joint" aria-label="Previous joint">←</button>
+            <span id="joint-index">All 29 DoF</span>
+            <button type="button" id="next-joint" aria-label="Next joint">→</button>
+          </div>
+        </div>
       </section>
 
       <section class="story-panel">

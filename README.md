@@ -4,6 +4,16 @@
 
 ---
 
+## Current G1 Architecture
+
+The current prototype maps Meta Quest controller or optical hand input through a Unity XR client and UDP bridge to a WSL2 robotics backend, then applies the solved arm and Dex3 commands to a simulated Unitree G1 digital twin. Physical robot actuation is intentionally disabled.
+
+[![G1 XR teleoperation architecture](portfolio/assets/teleoperation-architecture.svg)](https://jonymorse.com/teleop/portfolio/assets/teleoperation-architecture.svg)
+
+**[Open the interactive portfolio](https://jonymorse.com/teleop/)**
+
+---
+
 # Vision
 
 The XR Teleoperation Platform is a production-oriented mixed reality application that allows an operator wearing a Meta Quest 3 to interact with, supervise, and eventually control a robotic manipulator through an intuitive XR interface.

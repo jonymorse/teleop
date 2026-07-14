@@ -38,6 +38,9 @@ main { min-height: 0; padding: 20px 0; display: grid; grid-template-columns: min
 .media-view { min-width: 0; min-height: 0; margin: 0; display: grid; grid-template-rows: minmax(0, 1fr) 32px; }
 video { width: 100%; height: 100%; min-width: 0; min-height: 0; display: block; object-fit: cover; background: #050505; }
 figcaption { padding: 0 12px; display: flex; align-items: center; color: var(--quiet); font: 500 8px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.diagram-view { min-width: 0; min-height: 0; margin: 0; display: grid; grid-template-rows: minmax(0, 1fr) 32px; background: #0b0b0a; }
+.diagram-link { min-width: 0; min-height: 0; display: block; }
+.diagram-view img { width: 100%; height: 100%; min-width: 0; min-height: 0; display: block; object-fit: contain; }
 
 .model-view { min-width: 0; min-height: 0; position: relative; overflow: hidden; background: radial-gradient(circle at 53% 42%, #24201c 0, #11100e 32%, #080807 72%); }
 .model-view::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(236,233,225,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(236,233,225,.025) 1px, transparent 1px); background-size: 44px 44px; mask-image: linear-gradient(to bottom, transparent, black 25%, black 82%, transparent); }
@@ -97,6 +100,7 @@ footer { display: flex; align-items: center; justify-content: space-between; gap
   .view-switch { margin-left: auto; }
   .media-view { grid-template-rows: minmax(0, 1fr); }
   figcaption { display: none; }
+  .diagram-view { grid-template-rows: minmax(0, 1fr); }
   .case-study { padding: 14px 16px; }
   .index { font-size: 7px; }
   h1 { max-width: 420px; font-size: clamp(31px, 9.7vw, 43px); }

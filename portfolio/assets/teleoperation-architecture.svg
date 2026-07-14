@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">G1 XR teleoperation system architecture</title>
+  <desc id="desc">Command flow from a Meta Quest operator through a Unity XR client, UDP transport, a WSL2 robotics backend, and a simulated Unitree G1 digital twin. Visual feedback returns to the operator. Physical robot output is disabled.</desc>
+  <defs>
+    <style>
+      .bg{fill:#0b0b0a}.panel{fill:#11110f;stroke:#34322e;stroke-width:1.5}.inner{fill:#0d0d0c;stroke:#292824;stroke-width:1}.label{fill:#706d66;font:600 12px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.8px}.stage{fill:#d96a3a;font:700 12px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:1.4px}.heading{fill:#f3f0e8;font:650 25px Inter,Arial,sans-serif;letter-spacing:-.5px}.body{fill:#aca79d;font:400 14px Inter,Arial,sans-serif}.small{fill:#706d66;font:500 11px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.5px}.value{fill:#f3f0e8;font:600 14px Inter,Arial,sans-serif}.line{stroke:#403e39;stroke-width:1}.accent-line{stroke:#d96a3a;stroke-width:2.5;fill:none}.feedback{stroke:#817d74;stroke-width:1.5;stroke-dasharray:7 8;fill:none}.icon{stroke:#f3f0e8;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}.icon-muted{stroke:#817d74;stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round}.node{fill:#d96a3a;stroke:#f3f0e8;stroke-width:1}.danger{fill:#d96a3a}.disabled{opacity:.38}.boundary{fill:#0f0d0c;stroke:#5d3020;stroke-width:1.5;stroke-dasharray:7 7}
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#d96a3a"/></marker>
+    <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#817d74"/></marker>
+  </defs>
+  <rect class="bg" width="1600" height="900"/>
+  <text class="label" x="48" y="49">G1 XR TELEOPERATION / SYSTEM ARCHITECTURE</text>
+  <text class="heading" x="48" y="84">Human motion to simulated humanoid action</text>
+  <text class="body" x="1552" y="57" text-anchor="end">Meta Quest 3S · Unity 6 · WSL2 · Unitree G1</text>
+  <text class="small" x="1552" y="83" text-anchor="end">SIMULATION PROTOTYPE · JULY 2026</text>
+  <line class="line" x1="48" y1="112" x2="1552" y2="112"/>
+
+  <rect class="panel" x="48" y="152" width="248" height="520" rx="4"/>
+  <text class="stage" x="70" y="182">01 / OPERATOR</text><text class="heading" x="70" y="215">Meta Quest 3S</text><text class="body" x="70" y="241">Tracked human intent</text><line class="line" x1="70" y1="263" x2="274" y2="263"/>
+  <path class="icon" d="M105 307c10-13 27-18 67-18s57 5 67 18l-8 49c-3 16-16 25-31 25h-13l-15-18-15 18h-13c-15 0-28-9-31-25z"/><path class="icon-muted" d="M116 316c17-9 95-9 112 0M136 340h18m36 0h18"/>
+  <text class="small" x="172" y="407" text-anchor="middle">HEAD + WRIST POSE</text>
+  <rect class="inner" x="70" y="433" width="204" height="82" rx="2"/><circle class="node" cx="97" cy="461" r="5"/><text class="value" x="113" y="466">Touch controllers</text><circle class="node" cx="97" cy="489" r="5"/><text class="value" x="113" y="494">Optical hands</text>
+  <rect class="inner" x="70" y="528" width="204" height="116" rx="2"/><text class="label" x="88" y="553">TRACKING DATA</text><text class="body" x="88" y="579">6-DoF wrists + elbows</text><text class="body" x="88" y="603">25 landmarks per hand</text><text class="body" x="88" y="627">Buttons + thumbsticks</text>
+
+  <rect class="panel" x="342" y="152" width="330" height="520" rx="4"/>
+  <text class="stage" x="364" y="182">02 / XR CLIENT</text><text class="heading" x="364" y="215">Unity runtime</text><text class="body" x="364" y="241">Operator interface + safety</text><line class="line" x1="364" y1="263" x2="650" y2="263"/>
+  <g transform="translate(398 302)"><circle class="icon-muted" cx="44" cy="44" r="32"/><path class="icon" d="M44 44h47m-47 0V0m0 44L15 73"/><circle class="node" cx="44" cy="44" r="5"/></g><text class="label" x="507" y="320">FRAME PIPELINE</text><text class="body" x="507" y="345">OpenXR → Unity → robot</text><text class="small" x="507" y="367">CALIBRATION + HANDEDNESS</text>
+  <rect class="inner" x="364" y="403" width="286" height="58" rx="2"/><text class="value" x="382" y="429">Mode + input routing</text><text class="small" x="382" y="449">CONTROLLER / HAND / HOME</text>
+  <rect class="inner" x="364" y="473" width="286" height="58" rx="2"/><text class="value" x="382" y="499">Target conditioning</text><text class="small" x="382" y="519">SMOOTHING · RATE LIMITS</text>
+  <rect class="inner" x="364" y="543" width="286" height="101" rx="2"/><text class="label" x="382" y="569">SAFETY GATE</text><text class="body" x="382" y="594">Paused by default · e-stop</text><text class="body" x="382" y="618">Tracking freeze · home recovery</text>
+
+  <rect class="panel" x="718" y="247" width="168" height="330" rx="4"/>
+  <text class="stage" x="740" y="279">03 / LINK</text><text class="heading" x="740" y="313">UDP</text><text class="body" x="740" y="338">Windows ↔ WSL2</text><line class="line" x1="740" y1="359" x2="864" y2="359"/>
+  <g transform="translate(746 388)"><rect class="icon-muted" width="30" height="22" rx="2"/><rect class="icon-muted" x="46" width="30" height="22" rx="2"/><rect class="icon-muted" x="92" width="30" height="22" rx="2"/><path class="accent-line" d="M15 42h92" marker-end="url(#arrow)"/></g>
+  <text class="small" x="740" y="463">DISCOVERY · PORT 7447</text><text class="small" x="740" y="488">CHUNK + REASSEMBLE</text><text class="small" x="740" y="513">SEQUENCE VALIDATION</text><text class="small" x="740" y="538">STALE COMMAND TIMEOUT</text>
+
+  <rect class="panel" x="932" y="152" width="300" height="520" rx="4"/>
+  <text class="stage" x="954" y="182">04 / ROBOTICS BACKEND</text><text class="heading" x="954" y="215">WSL2 solver</text><text class="body" x="954" y="241">Unitree-derived control stack</text><line class="line" x1="954" y1="263" x2="1210" y2="263"/>
+  <g transform="translate(970 294)"><path class="icon-muted" d="M0 57l38-37 43 17 41-35"/><circle class="node" cy="57" r="5"/><circle class="node" cx="38" cy="20" r="5"/><circle class="node" cx="81" cy="37" r="5"/><circle class="node" cx="122" cy="2" r="5"/></g>
+  <text class="label" x="954" y="387">DUAL-ARM IK</text><text class="body" x="954" y="413">7 joints per arm</text><text class="body" x="954" y="437">Wrist pose + elbow hints</text><text class="small" x="954" y="460">≈5 MS BACKEND SOLVE</text>
+  <rect class="inner" x="954" y="487" width="256" height="72" rx="2"/><text class="value" x="972" y="514">Dex3 retargeting</text><text class="small" x="972" y="538">LANDMARKS → 14 HAND JOINTS</text>
+  <rect class="inner" x="954" y="571" width="256" height="73" rx="2"/><text class="value" x="972" y="598">Command constraints</text><text class="small" x="972" y="622">LIMITS · FILTERS · VALIDATION</text>
+
+  <rect class="panel" x="1278" y="152" width="274" height="520" rx="4"/>
+  <text class="stage" x="1300" y="182">05 / DIGITAL TWIN</text><text class="heading" x="1300" y="215">Unity G1</text><text class="body" x="1300" y="241">Simulation plant + task</text><line class="line" x1="1300" y1="263" x2="1530" y2="263"/>
+  <g transform="translate(1360 286)"><circle class="icon" cx="55" cy="24" r="20"/><path class="icon" d="M55 44v90m0-66L15 98m40-30 40 30m-40 36-30 68m30-68 30 68"/><circle class="node" cx="55" cy="68" r="4"/><circle class="node" cx="15" cy="98" r="4"/><circle class="node" cx="95" cy="98" r="4"/><circle class="node" cx="55" cy="134" r="4"/><circle class="node" cx="25" cy="202" r="4"/><circle class="node" cx="85" cy="202" r="4"/></g>
+  <text class="label" x="1415" y="519" text-anchor="middle">G1 · 29 DOF + DEX3</text><rect class="inner" x="1300" y="544" width="230" height="100" rx="2"/><text class="value" x="1318" y="571">Physics interaction</text><text class="small" x="1318" y="595">CONTACT-QUALIFIED GRASP</text><text class="small" x="1318" y="618">SLIP · BREAK · RELEASE</text>
+
+  <path class="accent-line" d="M296 412H342" marker-end="url(#arrow)"/><path class="accent-line" d="M672 412H718" marker-end="url(#arrow)"/><path class="accent-line" d="M886 412H932" marker-end="url(#arrow)"/><path class="accent-line" d="M1232 412H1278" marker-end="url(#arrow)"/>
+  <text class="stage" x="319" y="397" text-anchor="middle">POSE</text><text class="stage" x="695" y="397" text-anchor="middle">TARGETS</text><text class="stage" x="909" y="397" text-anchor="middle">JOINTS</text><text class="stage" x="1255" y="397" text-anchor="middle">COMMAND</text>
+  <path class="feedback" d="M1415 672v47H172v-47" marker-end="url(#arrow-muted)"/><rect class="bg" x="668" y="704" width="264" height="28"/><text class="small" x="800" y="722" text-anchor="middle">VISUAL FEEDBACK · ROBOT VIEW · HUD</text>
+
+  <rect class="boundary" x="48" y="770" width="1504" height="86" rx="4"/><circle class="danger" cx="72" cy="798" r="4"/><text class="stage" x="88" y="802">PHYSICAL HARDWARE BOUNDARY</text><text class="body" x="88" y="829">Robot actuation is intentionally disabled in this portfolio build.</text>
+  <path class="feedback disabled" d="M1186 813h116" marker-end="url(#arrow-muted)"/><g class="disabled" transform="translate(1330 788)"><circle class="icon-muted" cx="20" cy="10" r="8"/><path class="icon-muted" d="M20 18v26m0-18L7 35m13-9 13 9m-13 9L10 66m10-22 10 22"/></g><text class="small" x="1392" y="807">FUTURE</text><text class="value disabled" x="1392" y="832">Unitree G1 hardware</text>
+</svg>

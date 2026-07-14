@@ -29,6 +29,7 @@
           <div class="view-switch" role="group" aria-label="Choose project artifact">
             <button class="view-button is-active" type="button" data-view="demo">Task demo</button>
             <button class="view-button" type="button" data-view="model">Interactive G1</button>
+            <button class="view-button" type="button" data-view="diagram">System diagram</button>
           </div>
         </div>
 
@@ -66,6 +67,12 @@
             <button type="button" id="next-joint" aria-label="Next joint">→</button>
           </div>
         </div>
+        <figure class="diagram-view" data-view-panel="diagram" hidden>
+          <a class="diagram-link" href="assets/teleoperation-architecture.svg" target="_blank" rel="noreferrer" aria-label="Open the system architecture diagram at full resolution">
+            <img src="assets/teleoperation-architecture.svg" alt="Architecture diagram showing the Meta Quest operator, Unity XR client, UDP bridge, WSL2 solver, simulated G1 digital twin, visual feedback loop, and disabled physical hardware boundary">
+          </a>
+          <figcaption>End-to-end command path · select diagram to open full resolution</figcaption>
+        </figure>
       </section>
 
       <article class="case-study">

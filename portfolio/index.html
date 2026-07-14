@@ -3,33 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Jonathan Morse — an XR teleoperation prototype for controlling a Unitree G1 humanoid from Meta Quest 3S.">
-  <meta name="theme-color" content="#0b0b0a">
+  <meta name="description" content="Jonathan Morse — a simulation-first XR teleoperation system for the Unitree G1 humanoid.">
+  <meta name="theme-color" content="#e1d8c8">
   <title>G1 XR Teleoperation — Jonathan Morse</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
 </head>
-<body>
+<body data-palette="paper">
   <a class="skip-link" href="#project">Skip to project</a>
 
   <div class="page">
     <header class="site-header">
       <a class="owner" href="#project">Jonathan Morse</a>
-      <p>Software engineer working across XR, robotics, and human–robot interaction.</p>
-      <nav aria-label="External links">
-        <a href="https://github.com/jonymorse/teleop" target="_blank" rel="noreferrer">GitHub</a>
-        <a href="mailto:warmgarbege@gmail.com">Email</a>
+      <p>G1 XR Teleoperation <span>/</span> Simulation prototype</p>
+      <nav aria-label="Project links">
+        <a href="https://github.com/jonymorse/teleop" target="_blank" rel="noreferrer">Source</a>
+        <a href="mailto:warmgarbege@gmail.com">Contact</a>
+        <details class="palette-control">
+          <summary class="palette-trigger" aria-label="Choose color palette"></summary>
+          <div class="palette-menu" role="group" aria-label="Color palette">
+            <button class="palette-dot palette-dot--paper is-active" type="button" data-palette="paper" aria-label="Paper palette" aria-pressed="true"></button>
+            <button class="palette-dot palette-dot--graphite" type="button" data-palette="graphite" aria-label="Graphite palette" aria-pressed="false"></button>
+            <button class="palette-dot palette-dot--slate" type="button" data-palette="slate" aria-label="Slate palette" aria-pressed="false"></button>
+            <button class="palette-dot palette-dot--olive" type="button" data-palette="olive" aria-label="Olive palette" aria-pressed="false"></button>
+          </div>
+        </details>
       </nav>
     </header>
 
     <main id="project">
-      <section class="viewer" aria-label="Project media">
+      <section class="viewer" aria-label="Project evidence">
         <div class="viewer-header">
-          <span>Project artifact</span>
-          <div class="view-switch" role="group" aria-label="Choose project artifact">
-            <button class="view-button is-active" type="button" data-view="demo">Task demo</button>
-            <button class="view-button" type="button" data-view="model">Interactive G1</button>
-            <button class="view-button" type="button" data-view="diagram">System diagram</button>
+          <span class="evidence-label">Evidence / 01</span>
+          <div class="view-switch" role="group" aria-label="Choose project evidence">
+            <button class="view-button is-active" type="button" data-view="demo">Demo</button>
+            <button class="view-button" type="button" data-view="model">29-DoF model</button>
+            <button class="view-button" type="button" data-view="diagram">Architecture</button>
           </div>
         </div>
 
@@ -38,14 +47,14 @@
             <source src="../captures/quest3/2026-07-13/com.warmgarbege.xrteleoperation-20260713-211606-0_clip-12m10s-12m50s.mp4" type="video/mp4">
             Your browser does not support embedded video.
           </video>
-          <figcaption>Quest 3S capture · simulated pick-and-place · 40 seconds</figcaption>
+          <figcaption><span>Quest 3S capture</span><span>40 seconds / simulation</span></figcaption>
         </figure>
 
         <div class="model-view" data-view-panel="model" hidden>
           <model-viewer
             id="g1-model"
             src="assets/g1-29dof.glb"
-            alt="Interactive 3D model of the Unitree G1 with 29 movable joint markers"
+            alt="Interactive Unitree G1 model with 29 selectable joint markers"
             camera-controls
             camera-orbit="32deg 76deg 2.55m"
             camera-target="0m -0.13m 0m"
@@ -57,61 +66,64 @@
             interaction-prompt="none">
           </model-viewer>
           <div class="model-caption">
-            <span>Original URDF geometry</span>
             <strong id="joint-name">29 movable joints</strong>
-            <small id="joint-detail">Select a joint marker or cycle through the chain.</small>
+            <small id="joint-detail">Select a marker or cycle through the chain.</small>
           </div>
           <div class="joint-controls">
-            <button type="button" id="previous-joint" aria-label="Previous joint">←</button>
+            <button type="button" id="previous-joint" aria-label="Previous joint">&larr;</button>
             <span id="joint-index">All 29</span>
-            <button type="button" id="next-joint" aria-label="Next joint">→</button>
+            <button type="button" id="next-joint" aria-label="Next joint">&rarr;</button>
           </div>
         </div>
+
         <figure class="diagram-view" data-view-panel="diagram" hidden>
-          <a class="diagram-link" href="assets/teleoperation-architecture.svg" target="_blank" rel="noreferrer" aria-label="Open the system architecture diagram at full resolution">
-            <img src="assets/teleoperation-architecture.svg" alt="Architecture diagram showing the Meta Quest operator, Unity XR client, UDP bridge, WSL2 solver, simulated G1 digital twin, visual feedback loop, and disabled physical hardware boundary">
-          </a>
-          <figcaption>End-to-end command path · select diagram to open full resolution</figcaption>
+          <div class="diagram-link">
+            <span class="diagram-canvas">
+              <object id="architecture-diagram" class="diagram-object" data="assets/teleoperation-architecture.svg" type="image/svg+xml" tabindex="-1" aria-label="Quest tracking flows through a Unity XR client and a Python robotics backend to a simulated Unitree G1, with visual state returned to the operator."></object>
+            </span>
+          </div>
         </figure>
       </section>
 
       <article class="case-study">
-        <p class="index">Selected work 01 <span>·</span> Independent project <span>·</span> 2026</p>
-        <h1>XR teleoperation for the Unitree G1</h1>
-        <p class="summary">I built a Meta Quest interface that maps an operator’s arm and hand motion onto a simulated G1 humanoid. The system connects a Unity digital twin to a WSL2 robotics backend for dual-arm inverse kinematics and Dex3 hand retargeting.</p>
+        <header class="project-head">
+          <p class="eyebrow">XR robotics &middot; 2026</p>
+          <h1>G1 / XR<br>teleoperation</h1>
+          <div class="abstract">
+            <span>Abstract</span>
+            <p>A simulation-first interface for controlling a Unitree G1 from Meta Quest 3S. A custom Unity client and Python transport integrate Unitree's official arm IK and Dex3 hand retargeting.</p>
+          </div>
+        </header>
 
-        <section class="outcome">
-          <h2>What it demonstrates</h2>
-          <p>Controller and optical hand input can drive a 29-DoF humanoid through a complete simulated pick, transport, and place task. Physical robot output remains deliberately disabled.</p>
+        <section class="metrics" aria-label="System metrics">
+          <div><strong>29</strong><span>model DoF</span></div>
+          <div><strong>14</strong><span>arm joints</span></div>
+          <div><strong>14</strong><span>hand joints</span></div>
+          <div><strong>30 Hz</strong><span>command rate</span></div>
         </section>
 
-        <section class="work">
-          <h2>My contribution</h2>
-          <ol>
-            <li><span>01</span><p><strong>Motion</strong>Coordinate-frame calibration, dual-arm IK, wrist orientation, joint limits, and recovery states.</p></li>
-            <li><span>02</span><p><strong>Hands</strong>Quest landmark capture, Dex3 retargeting, filtering, and controller grasp synergies.</p></li>
-            <li><span>03</span><p><strong>Interaction</strong>UDP transport, tracking-loss safety, contact-qualified grasping, slip, and release.</p></li>
-          </ol>
+        <section class="specification">
+          <h2>System record</h2>
+          <dl>
+            <div><dt>Input</dt><dd>Quest 3S / Touch or optical hands</dd></div>
+            <div><dt>Control</dt><dd>Dual 7-DoF arms / wrist pose / Dex3 fingers</dd></div>
+            <div><dt>Solver</dt><dd>Official Unitree arm IK + Dex3 retargeting</dd></div>
+            <div><dt>Bridge</dt><dd>Custom JSON/UDP transport / 350 ms timeout</dd></div>
+            <div><dt>Runtime</dt><dd>Unity 6 / OpenXR / Python 3.10 / WSL2</dd></div>
+          </dl>
         </section>
 
-        <dl class="project-meta">
-          <div><dt>Role</dt><dd>Solo software engineer</dd></div>
-          <div><dt>Platform</dt><dd>Quest 3S · Unity 6 · WSL2</dd></div>
-          <div><dt>Stack</dt><dd>C# · Python · OpenXR · UDP</dd></div>
-          <div><dt>Status</dt><dd>Simulation prototype</dd></div>
-        </dl>
+        <section class="boundary">
+          <h2>Prototype scope</h2>
+          <p>Controls the simulated G1 only. If headset tracking is lost, robot motion pauses automatically.</p>
+        </section>
 
         <div class="case-links">
-          <a href="https://github.com/jonymorse/teleop" target="_blank" rel="noreferrer">Source code ↗</a>
-          <a href="https://github.com/jonymorse/teleop#readme" target="_blank" rel="noreferrer">Technical notes ↗</a>
+          <a href="https://github.com/jonymorse/teleop" target="_blank" rel="noreferrer">Repository &nearr;</a>
+          <a href="https://github.com/jonymorse/teleop#readme" target="_blank" rel="noreferrer">Implementation notes &nearr;</a>
         </div>
       </article>
     </main>
-
-    <footer>
-      <span>Quest tracking → Unity client → UDP bridge → Unitree solver → G1 digital twin</span>
-      <span>Prototype shown in simulation</span>
-    </footer>
   </div>
 
   <script src="script.js"></script>

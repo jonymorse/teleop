@@ -3,53 +3,49 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="G1 XR Teleoperation — a Meta Quest interface for controlling a Unitree G1 humanoid through hand tracking, inverse kinematics, and physics-aware grasping.">
-  <meta name="theme-color" content="#090908">
-  <title>G1 XR Teleoperation — Robotics Portfolio</title>
+  <meta name="description" content="Jonathan Morse — an XR teleoperation prototype for controlling a Unitree G1 humanoid from Meta Quest 3S.">
+  <meta name="theme-color" content="#0b0b0a">
+  <title>G1 XR Teleoperation — Jonathan Morse</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#project">Skip to project</a>
 
-  <div class="app">
-    <header>
-      <a class="identity" href="#project" aria-label="G1 XR Teleoperation home">
-        <span class="identity-mark">G1</span>
-        <span>XR Teleoperation</span>
-      </a>
-      <div class="header-meta">
-        <span><i></i> Prototype validated</span>
-        <span>Quest 3S · Unity 6</span>
-        <a href="https://github.com/jonymorse/teleop" target="_blank" rel="noreferrer">GitHub ↗</a>
-      </div>
+  <div class="page">
+    <header class="site-header">
+      <a class="owner" href="#project">Jonathan Morse</a>
+      <p>Software engineer working across XR, robotics, and human–robot interaction.</p>
+      <nav aria-label="External links">
+        <a href="https://github.com/jonymorse/teleop" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="mailto:warmgarbege@gmail.com">Email</a>
+      </nav>
     </header>
 
-    <main class="project" id="project">
-      <section class="demo-panel" aria-labelledby="project-title">
-        <div class="panel-label">
-          <span>00 / System viewer</span>
-          <div class="view-switch" role="group" aria-label="System viewer mode">
-            <button class="view-button is-active" type="button" data-view="demo">Demo</button>
-            <button class="view-button" type="button" data-view="model">29-DoF model</button>
+    <main id="project">
+      <section class="viewer" aria-label="Project media">
+        <div class="viewer-header">
+          <span>Project artifact</span>
+          <div class="view-switch" role="group" aria-label="Choose project artifact">
+            <button class="view-button is-active" type="button" data-view="demo">Task demo</button>
+            <button class="view-button" type="button" data-view="model">Interactive G1</button>
           </div>
         </div>
-        <figure class="media-view is-active" data-view-panel="demo">
+
+        <figure class="media-view" data-view-panel="demo">
           <video controls playsinline preload="metadata" poster="assets/g1-teleoperation-poster.jpg">
             <source src="../captures/quest3/2026-07-13/com.warmgarbege.xrteleoperation-20260713-211606-0_clip-12m10s-12m50s.mp4" type="video/mp4">
             Your browser does not support embedded video.
           </video>
-          <figcaption>Hand-driven pick and place · Quest capture · Unity simulation</figcaption>
+          <figcaption>Quest 3S capture · simulated pick-and-place · 40 seconds</figcaption>
         </figure>
+
         <div class="model-view" data-view-panel="model" hidden>
           <model-viewer
             id="g1-model"
             src="assets/g1-29dof.glb"
-            alt="Interactive 3D model of the Unitree G1 humanoid with 29 movable joint markers"
+            alt="Interactive 3D model of the Unitree G1 with 29 movable joint markers"
             camera-controls
-            auto-rotate
-            auto-rotate-delay="1200"
-            rotation-per-second="8deg"
             camera-orbit="32deg 76deg 2.55m"
             camera-target="0m -0.13m 0m"
             min-camera-orbit="auto 45deg 1.75m"
@@ -59,89 +55,56 @@
             exposure="1.15"
             interaction-prompt="none">
           </model-viewer>
-          <div class="model-status">
-            <span class="model-kicker">Original URDF geometry</span>
+          <div class="model-caption">
+            <span>Original URDF geometry</span>
             <strong id="joint-name">29 movable joints</strong>
-            <span id="joint-detail">Select a marker or cycle through the kinematic chain.</span>
+            <small id="joint-detail">Select a joint marker or cycle through the chain.</small>
           </div>
           <div class="joint-controls">
             <button type="button" id="previous-joint" aria-label="Previous joint">←</button>
-            <span id="joint-index">All 29 DoF</span>
+            <span id="joint-index">All 29</span>
             <button type="button" id="next-joint" aria-label="Next joint">→</button>
           </div>
         </div>
       </section>
 
-      <section class="story-panel">
-        <div class="story-top">
-          <p class="eyebrow"><span class="status-dot"></span>Humanoid robotics / XR</p>
-          <h1 id="project-title">Human motion.<br><em>Humanoid action.</em></h1>
-          <p class="lede">A mixed-reality teleoperation system mapping hands and controllers onto a Unitree G1 digital twin—with dual-arm IK, Dex3 retargeting, a low-latency WSL2 backend, and physics-aware grasping.</p>
+      <article class="case-study">
+        <p class="index">Selected work 01 <span>·</span> Independent project <span>·</span> 2026</p>
+        <h1>XR teleoperation for the Unitree G1</h1>
+        <p class="summary">I built a Meta Quest interface that maps an operator’s arm and hand motion onto a simulated G1 humanoid. The system connects a Unity digital twin to a WSL2 robotics backend for dual-arm inverse kinematics and Dex3 hand retargeting.</p>
 
-          <div class="tabs" role="tablist" aria-label="Project details">
-            <button class="tab is-active" role="tab" aria-selected="true" aria-controls="overview" id="tab-overview">Overview</button>
-            <button class="tab" role="tab" aria-selected="false" aria-controls="system" id="tab-system">System</button>
-            <button class="tab" role="tab" aria-selected="false" aria-controls="engineering" id="tab-engineering">Engineering</button>
-            <button class="tab" role="tab" aria-selected="false" aria-controls="next" id="tab-next">Next</button>
-          </div>
+        <section class="outcome">
+          <h2>What it demonstrates</h2>
+          <p>Controller and optical hand input can drive a 29-DoF humanoid through a complete simulated pick, transport, and place task. Physical robot output remains deliberately disabled.</p>
+        </section>
 
-          <div class="tab-content">
-            <section class="tab-panel is-active" id="overview" role="tabpanel" aria-labelledby="tab-overview">
-              <dl class="facts">
-                <div><dt>Robot</dt><dd>Unitree G1 · 29 DoF</dd></div>
-                <div><dt>Input</dt><dd>Touch + bare hands</dd></div>
-                <div><dt>Control</dt><dd>6-DoF dual-arm IK</dd></div>
-                <div><dt>Hands</dt><dd>Dex3 retargeting</dd></div>
-              </dl>
-            </section>
-            <section class="tab-panel" id="system" role="tabpanel" aria-labelledby="tab-system" hidden>
-              <p class="flow">Quest tracking <b>→</b> Unity safety layer <b>→</b> UDP bridge <b>→</b> WSL2 Unitree solver <b>→</b> G1 digital twin</p>
-              <p class="detail">The client and solver remain separated so simulation can be replaced by a hardware-safe robot adapter later.</p>
-            </section>
-            <section class="tab-panel" id="engineering" role="tabpanel" aria-labelledby="tab-engineering" hidden>
-              <ul class="compact-list">
-                <li><b>Coordinate frames</b><span>Normalized OpenXR, Unity, URDF, and Unitree conventions.</span></li>
-                <li><b>Network reliability</b><span>Chunking, validation, discovery, timeouts, and stale-command safety.</span></li>
-                <li><b>Physical grasping</b><span>Contact-qualified compliant assistance with slip and break limits.</span></li>
-              </ul>
-            </section>
-            <section class="tab-panel" id="next" role="tabpanel" aria-labelledby="tab-next" hidden>
-              <p class="flow">Robot-in-the-loop validation</p>
-              <p class="detail">Add a deadman control, watchdogs, telemetry, collision constraints, repeatable task metrics, and a hardware command adapter.</p>
-            </section>
-          </div>
+        <section class="work">
+          <h2>My contribution</h2>
+          <ol>
+            <li><span>01</span><p><strong>Motion</strong>Coordinate-frame calibration, dual-arm IK, wrist orientation, joint limits, and recovery states.</p></li>
+            <li><span>02</span><p><strong>Hands</strong>Quest landmark capture, Dex3 retargeting, filtering, and controller grasp synergies.</p></li>
+            <li><span>03</span><p><strong>Interaction</strong>UDP transport, tracking-loss safety, contact-qualified grasping, slip, and release.</p></li>
+          </ol>
+        </section>
 
-          <div class="actions">
-            <a class="button primary" href="mailto:warmgarbege@gmail.com">Get in touch</a>
-            <a class="button" href="https://github.com/jonymorse/teleop" target="_blank" rel="noreferrer">GitHub ↗</a>
-            <a class="button" href="https://github.com/jonymorse/teleop#readme" target="_blank" rel="noreferrer">Technical README</a>
-          </div>
+        <dl class="project-meta">
+          <div><dt>Role</dt><dd>Solo software engineer</dd></div>
+          <div><dt>Platform</dt><dd>Quest 3S · Unity 6 · WSL2</dd></div>
+          <div><dt>Stack</dt><dd>C# · Python · OpenXR · UDP</dd></div>
+          <div><dt>Status</dt><dd>Simulation prototype</dd></div>
+        </dl>
+
+        <div class="case-links">
+          <a href="https://github.com/jonymorse/teleop" target="_blank" rel="noreferrer">Source code ↗</a>
+          <a href="https://github.com/jonymorse/teleop#readme" target="_blank" rel="noreferrer">Technical notes ↗</a>
         </div>
-      </section>
+      </article>
     </main>
 
-    <section class="technical-rail" aria-label="Project technical summary">
-      <article>
-        <span>01 / Pipeline</span>
-        <strong>Quest → Unity → UDP → WSL2 → G1</strong>
-      </article>
-      <article>
-        <span>02 / Performance</span>
-        <strong>≈5 ms backend solve</strong>
-      </article>
-      <article>
-        <span>03 / Interaction</span>
-        <strong>Contact-qualified compliant grasp</strong>
-      </article>
-      <article>
-        <span>04 / Safety</span>
-        <strong>Limits · timeout · home · e-stop</strong>
-      </article>
-      <article class="next">
-        <span>05 / Next</span>
-        <strong>Robot-in-the-loop validation ↗</strong>
-      </article>
-    </section>
+    <footer>
+      <span>Quest tracking → Unity client → UDP bridge → Unitree solver → G1 digital twin</span>
+      <span>Prototype shown in simulation</span>
+    </footer>
   </div>
 
   <script src="script.js"></script>

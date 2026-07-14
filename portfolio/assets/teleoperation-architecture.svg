@@ -21,13 +21,13 @@
   <text class="eyebrow" x="72" y="227">01 / INPUT</text>
   <text class="card-title" x="72" y="270">Meta Quest 3S</text>
   <rect class="media-clear" x="72" y="304" width="272" height="288" rx="2"/>
-  <image x="72" y="304" width="272" height="288" xlink:href="quest-3s-diagram-render.png" href="quest-3s-diagram-render.png" preserveAspectRatio="xMidYMid meet" clip-path="url(#quest-clip)"/>
+  <image x="72" y="304" width="272" height="288" xlink:href="quest-3s-diagram-render.png?v=20260714-1" href="quest-3s-diagram-render.png?v=20260714-1" preserveAspectRatio="xMidYMid meet" clip-path="url(#quest-clip)"/>
 
   <rect class="card" x="416" y="190" width="350" height="450" rx="3"/>
   <text class="eyebrow" x="440" y="227">02 / CLIENT</text>
   <text class="card-title" x="440" y="270">Unity XR</text>
   <rect class="media" x="440" y="304" width="302" height="288" rx="2"/>
-  <image x="440" y="304" width="302" height="288" xlink:href="g1-teleoperation-frame-04s.jpg" href="g1-teleoperation-frame-04s.jpg" preserveAspectRatio="xMidYMid slice" clip-path="url(#unity-clip)"/>
+  <image x="440" y="304" width="302" height="288" xlink:href="g1-teleoperation-frame-04s.jpg?v=20260714-1" href="g1-teleoperation-frame-04s.jpg?v=20260714-1" preserveAspectRatio="xMidYMid slice" clip-path="url(#unity-clip)"/>
 
   <rect class="card" x="814" y="190" width="330" height="450" rx="3"/>
   <text class="eyebrow" x="838" y="227">03 / BACKEND</text>
@@ -45,7 +45,7 @@
   <text class="eyebrow" x="1216" y="227">04 / OUTPUT</text>
   <text class="card-title" x="1216" y="270">G1 simulation</text>
   <rect class="media-clear" x="1216" y="304" width="312" height="288" rx="2"/>
-  <image x="1216" y="304" width="312" height="288" xlink:href="g1-diagram-render.png" href="g1-diagram-render.png" preserveAspectRatio="xMidYMid meet" clip-path="url(#g1-clip)"/>
+  <image x="1216" y="304" width="312" height="288" xlink:href="g1-diagram-render.png?v=20260714-1" href="g1-diagram-render.png?v=20260714-1" preserveAspectRatio="xMidYMid meet" clip-path="url(#g1-clip)"/>
 
   <path class="arrow" d="M368 448h48" marker-end="url(#arrowhead)"/>
   <path class="arrow" d="M766 448h48" marker-end="url(#arrowhead)"/>

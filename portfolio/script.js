@@ -36,7 +36,7 @@ function selectJoint(index) {
 }
 
 if (modelViewer) {
-  fetch("assets/g1-29dof-joints.json")
+  fetch("assets/g1-29dof-joints.json?v=20260714-1")
     .then((response) => response.json())
     .then((data) => {
       joints = data;
@@ -117,7 +117,6 @@ function setPalette(palette) {
     button.setAttribute("aria-pressed", String(active));
   });
   applyDiagramPalette(palette);
-  localStorage.setItem("g1-portfolio-palette", palette);
 }
 
 paletteButtons.forEach((button) => button.addEventListener("click", () => {
@@ -132,4 +131,4 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closePaletteMenu();
 });
 const requestedPalette = new URLSearchParams(window.location.search).get("palette");
-setPalette(paletteThemeColors[requestedPalette] ? requestedPalette : localStorage.getItem("g1-portfolio-palette") || "paper");
+setPalette(paletteThemeColors[requestedPalette] ? requestedPalette : "paper");

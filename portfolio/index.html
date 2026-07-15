@@ -6,7 +6,7 @@
   <meta name="description" content="Jonathan Morse — a simulation-first XR teleoperation system for the Unitree G1 humanoid.">
   <meta name="theme-color" content="#e1d8c8">
   <title>G1 XR Teleoperation — Jonathan Morse</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260714-1">
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
 </head>
 <body data-palette="paper">
@@ -53,7 +53,7 @@
         <div class="model-view" data-view-panel="model" hidden>
           <model-viewer
             id="g1-model"
-            src="assets/g1-29dof.glb"
+            src="assets/g1-29dof.glb?v=20260714-1"
             alt="Interactive Unitree G1 model with 29 selectable joint markers"
             camera-controls
             camera-orbit="32deg 76deg 2.55m"
@@ -79,7 +79,7 @@
         <figure class="diagram-view" data-view-panel="diagram" hidden>
           <div class="diagram-link">
             <span class="diagram-canvas">
-              <object id="architecture-diagram" class="diagram-object" data="assets/teleoperation-architecture.svg" type="image/svg+xml" tabindex="-1" aria-label="Quest tracking flows through a Unity XR client and a Python robotics backend to a simulated Unitree G1, with visual state returned to the operator."></object>
+              <object id="architecture-diagram" class="diagram-object" data="assets/teleoperation-architecture.svg?v=20260714-1" type="image/svg+xml" tabindex="-1" aria-label="Quest tracking flows through a Unity XR client and a Python robotics backend to a simulated Unitree G1, with visual state returned to the operator."></object>
             </span>
           </div>
         </figure>
@@ -126,6 +126,6 @@
     </main>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=20260714-1"></script>
 </body>
 </html>

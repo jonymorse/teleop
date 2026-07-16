@@ -4,37 +4,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Jonathan Morse — a simulation-first XR teleoperation system for the Unitree G1 humanoid.">
-  <meta name="theme-color" content="#e1d8c8">
+  <meta name="theme-color" content="#f4f5f2">
   <title>G1 XR Teleoperation — Jonathan Morse</title>
-  <link rel="stylesheet" href="styles.css?v=20260714-1">
+  <script>
+    (() => {
+      const savedTheme = localStorage.getItem('theme');
+      const theme = savedTheme === 'light' || savedTheme === 'dark'
+        ? savedTheme
+        : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css?v=20260716-1">
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
 </head>
-<body data-palette="paper">
+<body>
   <a class="skip-link" href="#project">Skip to project</a>
 
   <div class="page">
     <header class="site-header">
       <a class="owner" href="https://jonymorse.com">Jonathan Morse</a>
-      <p>G1 XR Teleoperation <span>/</span> Simulation prototype</p>
       <nav aria-label="Project links">
         <a href="https://github.com/jonymorse/teleop" target="_blank" rel="noreferrer">Source</a>
         <a href="mailto:jemorse55@gmail.com">Contact</a>
-        <details class="palette-control">
-          <summary class="palette-trigger" aria-label="Choose color palette"></summary>
-          <div class="palette-menu" role="group" aria-label="Color palette">
-            <button class="palette-dot palette-dot--paper is-active" type="button" data-palette="paper" aria-label="Paper palette" aria-pressed="true"></button>
-            <button class="palette-dot palette-dot--graphite" type="button" data-palette="graphite" aria-label="Graphite palette" aria-pressed="false"></button>
-            <button class="palette-dot palette-dot--slate" type="button" data-palette="slate" aria-label="Slate palette" aria-pressed="false"></button>
-            <button class="palette-dot palette-dot--olive" type="button" data-palette="olive" aria-label="Olive palette" aria-pressed="false"></button>
-          </div>
-        </details>
+        <button class="theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme">
+          <span aria-hidden="true"></span>
+        </button>
       </nav>
     </header>
 
     <main id="project">
       <section class="viewer" aria-label="Project evidence">
         <div class="viewer-header">
-          <span class="evidence-label">Evidence / 01</span>
           <div class="view-switch" role="group" aria-label="Choose project evidence">
             <button class="view-button is-active" type="button" data-view="demo">Demo</button>
             <button class="view-button" type="button" data-view="model">29-DoF model</button>
@@ -47,7 +49,6 @@
             <source src="../captures/quest3/2026-07-13/com.warmgarbege.xrteleoperation-20260713-211606-0_clip-12m10s-12m50s.mp4" type="video/mp4">
             Your browser does not support embedded video.
           </video>
-          <figcaption><span>Quest 3S capture</span><span>40 seconds / simulation</span></figcaption>
         </figure>
 
         <div class="model-view" data-view-panel="model" hidden>
@@ -87,45 +88,30 @@
 
       <article class="case-study">
         <header class="project-head">
-          <p class="eyebrow">XR robotics &middot; 2026</p>
-          <h1>G1 / XR<br>teleoperation</h1>
-          <div class="abstract">
-            <span>Abstract</span>
-            <p>A simulation-first interface for controlling a Unitree G1 from Meta Quest 3S. A custom Unity client and Python transport integrate Unitree's official arm IK and Dex3 hand retargeting.</p>
+          <h1>G1 XR teleoperation</h1>
+          <div class="project-summary">
+            <p class="lead">A Meta Quest 3S interface for controlling a simulated Unitree G1.</p>
+            <p>Unity and OpenXR send head and hand poses to Python for arm IK and Dex3 hand retargeting.</p>
           </div>
         </header>
 
         <section class="metrics" aria-label="System metrics">
-          <div><strong>29</strong><span>model DoF</span></div>
-          <div><strong>14</strong><span>arm joints</span></div>
-          <div><strong>14</strong><span>hand joints</span></div>
+          <div><strong>29</strong><span>degrees of freedom</span></div>
           <div><strong>30 Hz</strong><span>command rate</span></div>
         </section>
 
-        <section class="specification">
-          <h2>System record</h2>
+        <section class="specification" aria-label="System details">
           <dl>
-            <div><dt>Input</dt><dd>Quest 3S / Touch or optical hands</dd></div>
-            <div><dt>Control</dt><dd>Dual 7-DoF arms / wrist pose / Dex3 fingers</dd></div>
-            <div><dt>Solver</dt><dd>Official Unitree arm IK + Dex3 retargeting</dd></div>
-            <div><dt>Bridge</dt><dd>Custom JSON/UDP transport / 350 ms timeout</dd></div>
-            <div><dt>Runtime</dt><dd>Unity 6 / OpenXR / Python 3.10 / WSL2</dd></div>
+            <div><dt>Input</dt><dd>Meta Quest 3S</dd></div>
+            <div><dt>Client</dt><dd>Unity 6 / OpenXR</dd></div>
+            <div><dt>Control</dt><dd>Unitree arm IK / Dex3 retargeting</dd></div>
+            <div><dt>Status</dt><dd>Simulation only / pauses on tracking loss</dd></div>
           </dl>
         </section>
-
-        <section class="boundary">
-          <h2>Prototype scope</h2>
-          <p>Controls the simulated G1 only. If headset tracking is lost, robot motion pauses automatically.</p>
-        </section>
-
-        <div class="case-links">
-          <a href="https://github.com/jonymorse/teleop" target="_blank" rel="noreferrer">Repository &nearr;</a>
-          <a href="https://github.com/jonymorse/teleop#readme" target="_blank" rel="noreferrer">Implementation notes &nearr;</a>
-        </div>
       </article>
     </main>
   </div>
 
-  <script src="script.js?v=20260714-1"></script>
+  <script src="script.js?v=20260716-1"></script>
 </body>
 </html>

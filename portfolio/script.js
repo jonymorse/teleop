@@ -61,41 +61,28 @@ if (modelViewer) {
 document.getElementById("previous-joint")?.addEventListener("click", () => selectJoint(selectedJoint - 1));
 document.getElementById("next-joint")?.addEventListener("click", () => selectJoint(selectedJoint + 1));
 
-const paletteButtons = [...document.querySelectorAll("[data-palette]")];
-const paletteControl = document.querySelector(".palette-control");
+const themeToggle = document.querySelector(".theme-toggle");
 const architectureDiagram = document.getElementById("architecture-diagram");
-const paletteThemeColors = {
-  paper: "#e1d8c8",
-  graphite: "#090908",
-  slate: "#080b0e",
-  olive: "#0b0d08"
+const themeColors = {
+  light: "#f4f5f2",
+  dark: "#171918"
 };
 const diagramPalettes = {
-  paper: {
-    bg: "#e1d8c8", panel: "#eee7dc", panel2: "#e8decd", media: "#d1c8b7",
-    text: "#1f1d19", muted: "#5e584f", quiet: "#8b8173", line: "#b8ad9d",
-    accent: "#9a5538", accentSoft: "#ead8ca"
+  light: {
+    bg: "#f4f5f2", panel: "#ffffff", panel2: "#e9ece9", media: "#eef0ed",
+    text: "#1b1d1c", muted: "#5d6461", quiet: "#858c88", line: "#d5d8d4",
+    accent: "#496b78", accentSoft: "#e2e9eb"
   },
-  graphite: {
-    bg: "#090908", panel: "#111110", panel2: "#161514", media: "#0f0f0d",
-    text: "#f3f0e8", muted: "#aca79d", quiet: "#706d66", line: "#3b3934",
-    accent: "#d96a3a", accentSoft: "#1c100c"
-  },
-  slate: {
-    bg: "#080b0e", panel: "#10151a", panel2: "#151b21", media: "#0d1217",
-    text: "#edf3f5", muted: "#a5b0b4", quiet: "#697378", line: "#34404a",
-    accent: "#83a9be", accentSoft: "#111d24"
-  },
-  olive: {
-    bg: "#0b0d08", panel: "#11140d", panel2: "#171a12", media: "#0f130b",
-    text: "#eff0e5", muted: "#a8aa98", quiet: "#6c6f5f", line: "#3a3f31",
-    accent: "#a2a866", accentSoft: "#191b0e"
+  dark: {
+    bg: "#171918", panel: "#202321", panel2: "#222725", media: "#1b1f1d",
+    text: "#f0f1ed", muted: "#b3b9b5", quiet: "#8d9590", line: "#3a3e3b",
+    accent: "#8fb6c3", accentSoft: "#1d2a2e"
   }
 };
 
-function applyDiagramPalette(palette) {
+function applyDiagramPalette(theme) {
   const svg = architectureDiagram?.contentDocument?.documentElement;
-  const colors = diagramPalettes[palette];
+  const colors = diagramPalettes[theme];
   if (!svg || !colors) return;
   Object.entries(colors).forEach(([key, value]) => {
     const property = key === "panel2" ? "panel-2" : key === "accentSoft" ? "accent-soft" : key;
@@ -103,32 +90,21 @@ function applyDiagramPalette(palette) {
   });
 }
 
-function closePaletteMenu() {
-  paletteControl?.removeAttribute("open");
+function setTheme(theme, persist = false) {
+  if (!themeColors[theme]) return;
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColors[theme]);
+  const nextTheme = theme === "dark" ? "light" : "dark";
+  const label = `Switch to ${nextTheme} mode`;
+  themeToggle?.setAttribute("aria-label", label);
+  themeToggle?.setAttribute("title", label);
+  if (persist) localStorage.setItem("theme", theme);
+  applyDiagramPalette(theme);
 }
 
-function setPalette(palette) {
-  if (!paletteThemeColors[palette]) return;
-  document.body.dataset.palette = palette;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", paletteThemeColors[palette]);
-  paletteButtons.forEach((button) => {
-    const active = button.dataset.palette === palette;
-    button.classList.toggle("is-active", active);
-    button.setAttribute("aria-pressed", String(active));
-  });
-  applyDiagramPalette(palette);
-}
-
-paletteButtons.forEach((button) => button.addEventListener("click", () => {
-  setPalette(button.dataset.palette);
-  closePaletteMenu();
-}));
-architectureDiagram?.addEventListener("load", () => applyDiagramPalette(document.body.dataset.palette));
-document.addEventListener("click", (event) => {
-  if (!paletteControl?.contains(event.target)) closePaletteMenu();
+themeToggle?.addEventListener("click", () => {
+  setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark", true);
 });
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closePaletteMenu();
-});
-const requestedPalette = new URLSearchParams(window.location.search).get("palette");
-setPalette(paletteThemeColors[requestedPalette] ? requestedPalette : "paper");
+architectureDiagram?.addEventListener("load", () => applyDiagramPalette(document.documentElement.dataset.theme));
+setTheme(document.documentElement.dataset.theme || "light");

@@ -13,9 +13,8 @@
   </defs>
 
   <rect class="bg" width="1600" height="900"/>
-  <text class="eyebrow" x="48" y="58">SYSTEM ARCHITECTURE</text>
-  <text class="title" x="48" y="105">XR teleoperation pipeline</text>
-  <line class="rule" x1="48" y1="136" x2="1552" y2="136"/>
+  <text class="title" x="48" y="140">XR teleoperation pipeline</text>
+  <line class="rule" x1="48" y1="164" x2="1552" y2="164"/>
 
   <rect class="card" x="48" y="190" width="320" height="450" rx="3"/>
   <text class="eyebrow" x="72" y="227">01 / INPUT</text>

@@ -1,20 +1,26 @@
 const video = document.querySelector("video");
 const viewButtons = [...document.querySelectorAll(".view-button")];
 const viewPanels = [...document.querySelectorAll("[data-view-panel]")];
+const modelViewer = document.getElementById("g1-model");
+const mobileDemoOnly = window.matchMedia("(max-width: 600px)");
 
-function showView(view) {
+function showView(requestedView) {
+  const view = mobileDemoOnly.matches ? "demo" : requestedView;
   viewButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.view === view));
   viewPanels.forEach((panel) => {
     const active = panel.dataset.viewPanel === view;
     panel.hidden = !active;
   });
+  if (view === "model" && modelViewer && !modelViewer.hasAttribute("src")) {
+    modelViewer.setAttribute("src", modelViewer.dataset.src);
+  }
   if (view === "model") video?.pause();
 }
 
 viewButtons.forEach((button) => button.addEventListener("click", () => showView(button.dataset.view)));
 showView(new URLSearchParams(window.location.search).get("view") || "demo");
+mobileDemoOnly.addEventListener("change", () => showView("demo"));
 
-const modelViewer = document.getElementById("g1-model");
 const jointName = document.getElementById("joint-name");
 const jointDetail = document.getElementById("joint-detail");
 const jointIndex = document.getElementById("joint-index");

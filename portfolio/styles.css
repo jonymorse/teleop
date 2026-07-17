@@ -131,33 +131,45 @@ h1 { margin: 0; font-size: clamp(42px, 3.5vw, 56px); line-height: .98; letter-sp
 
 @media (max-width: 1080px) {
   :root { --page-gutter: 16px; }
-  .page { grid-template-rows: 64px minmax(0, 1fr); }
-  main { padding: 12px 0 14px; grid-template-columns: 1fr; grid-template-rows: minmax(0, .86fr) minmax(0, 1.14fr); gap: 10px; }
-  .case-study { padding: 15px 4px; justify-content: flex-start; }
-  .project-head { padding: 0 0 13px; }
-  h1 { font-size: clamp(32px, 5vw, 45px); }
-  .project-summary { margin-top: 10px; }
-  .project-summary p { margin-top: 5px; font-size: 11px; line-height: 1.4; }
-  .project-summary p.lead { font-size: 14px; }
-  .metrics { padding-top: 10px; grid-template-columns: repeat(2, minmax(0, 120px)); }
-  .specification { padding-top: 10px; }
+  html { height: auto; overflow-x: hidden; overflow-y: auto; }
+  body { height: auto; min-height: 100%; overflow: visible; }
+  .page { height: auto; min-height: 100dvh; display: block; }
+  .site-header { position: sticky; top: 0; height: 64px; }
+  main { padding: 20px 0 56px; display: flex; flex-direction: column; gap: clamp(32px, 5vw, 52px); }
+  .viewer { min-height: 0; grid-template-rows: 44px auto; gap: 10px; }
+  .viewer-header { min-width: 0; }
+  .view-switch { width: 100%; height: 44px; }
+  .view-button { min-height: 44px; font-size: 14px; }
+  .media-view, .diagram-view, .model-view { width: 100%; height: auto; min-height: 0; aspect-ratio: 16 / 9; }
+  .case-study { padding: 0; overflow: visible; justify-content: flex-start; }
+  .project-head { padding: 0 0 24px; }
+  h1 { font-size: clamp(38px, 6vw, 52px); }
+  .project-summary { margin-top: 16px; }
+  .project-summary p { margin-top: 8px; font-size: 14px; line-height: 1.5; }
+  .project-summary p.lead { font-size: 18px; }
+  .metrics { padding-top: 18px; grid-template-columns: repeat(2, minmax(0, 132px)); }
+  .specification { padding-top: 28px; }
+  .specification dl { gap: 10px; }
+  .specification dt, .specification dd { font-size: 13px; }
 }
 
 @media (max-width: 600px) {
-  .owner { font-size: 16px; }
-  .site-header nav { gap: 12px; }
-  .site-header nav > a { font-size: 14px; }
-  .theme-toggle { width: 26px; height: 26px; }
-  main { padding-top: 8px; grid-template-rows: minmax(0, .72fr) minmax(0, 1.28fr); gap: 8px; }
-  .viewer-header { justify-content: center; }
-  .view-switch { gap: 17px; }
-  .case-study { padding: 12px 2px; }
-  h1 { font-size: clamp(29px, 9vw, 39px); }
-  .project-summary p { font-size: 10.5px; }
-  .project-summary p.lead { font-size: 13px; }
+  .owner { min-height: 44px; display: flex; align-items: center; font-size: 16px; }
+  .site-header nav { gap: 8px; }
+  .site-header nav > a { min-height: 44px; display: flex; align-items: center; font-size: 14px; }
+  .theme-toggle { width: 44px; height: 44px; }
+  main { padding: 16px 0 max(24px, env(safe-area-inset-bottom)); gap: 30px; }
+  .viewer { margin-inline: calc(0px - var(--page-gutter)); grid-template-rows: auto; gap: 0; }
+  .viewer-header { display: none; }
+  .media-view, .model-view { border-radius: 0; }
+  .case-study { padding: 0 2px; }
+  h1 { font-size: clamp(34px, 10vw, 42px); }
+  .project-summary p { font-size: 14px; }
+  .project-summary p.lead { font-size: 17px; }
   .metrics span { white-space: normal; }
   .specification dl div { grid-template-columns: 68px 1fr; gap: 9px; }
-  .specification dd { font-size: 9.5px; }
+  .specification dt { font-size: 12px; }
+  .specification dd { font-size: 13px; }
   .model-caption { left: 12px; bottom: 11px; }
   .model-caption small { display: none; }
   .joint-controls { right: 10px; bottom: 10px; }
